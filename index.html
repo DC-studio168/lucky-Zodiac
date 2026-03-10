@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>专属运势 | 接收运势</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 html2canvas 用于生成海报 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- 引入高质感细字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 核心梦幻配色 --- */
+        :root { 
+            --horse-blue: #A2E0F5;    
+            --coral-pink: #FF9A94;    
+            --text-main: #756C69;     
+            --bg-pearl: #FDFCFB;      
+        }
+        
+        body { 
+            font-family: 'Inter', -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; 
+            background-color: var(--bg-pearl); 
+            color: var(--text-main); 
+            overscroll-behavior: none; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .serif { font-family: 'Noto Serif SC', serif; }
+        
+        /* --- 柔和毛玻璃卡片 --- */
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(30px); 
+            -webkit-backdrop-filter: blur(30px); 
+            border: 1px solid rgba(255, 255, 255, 0.9); 
+            border-radius: 36px; 
+            box-shadow: 0 20px 50px -10px rgba(162, 224, 245, 0.35); 
+        }
+        
+        /* --- 背景极慢呼吸光晕 --- */
+        .bg-glow { 
+            position: fixed; 
+            width: 150vw; 
+            height: 150vw; 
+            top: -25%; 
+            left: -25%; 
+            background: radial-gradient(circle at 30% 30%, rgba(162, 224, 245, 0.15) 0%, rgba(255, 255, 255, 0) 45%),
+                        radial-gradient(circle at 70% 70%, rgba(255, 154, 148, 0.12) 0%, rgba(255, 255, 255, 0) 45%);
+            z-index: -1; 
+            animation: drift 40s infinite alternate ease-in-out; 
+        }
+        @keyframes drift { from { transform: rotate(0deg) scale(1); } to { transform: rotate(5deg) scale(1.05); } }
+
+        .hidden-view { display: none !important; }
+        .fade-in { animation: fadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- 交互组件 --- */
+        .gender-btn { transition: all 0.3s ease; color: #9B928F; }
+        .gender-btn.active { 
+            background: var(--coral-pink); 
+            color: white; 
+            border-color: var(--coral-pink); 
+            box-shadow: 0 6px 16px rgba(255, 154, 148, 0.3);
+        }
+        
+        .star-icon { width: 18px; height: 18px; display: inline-block; transition: all 0.4s; }
+        .star-full { fill: var(--coral-pink); }
+        .star-empty { fill: #F0EBE9; }
+        
+        input[type="text"], input[type="date"] {
+            -webkit-appearance: none;
+            border-radius: 16px;
+            font-size: 15px; 
+            color: var(--text-main);
+        }
+        input:focus { outline: none; border-color: var(--horse-blue); background: white; box-shadow: 0 0 0 3px rgba(162, 224, 245, 0.2); }
+        input::placeholder { color: #CDC7C5; font-weight: 300; }
+        
+        .breathing { animation: breath 2.5s infinite ease-in-out; }
+        @keyframes breath { 0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 10px rgba(162,224,245,0.4)); } 50% { opacity: 0.8; transform: scale(0.96); filter: drop-shadow(0 0 2px rgba(162,224,245,0.1)); } }
+
+        /* 海报模式强制样式 */
+        .poster-mode { border-radius: 0 !important; box-shadow: none !important; background: #FDFCFB !important; padding-bottom: 30px; border: none !important; }
+        #poster-modal { background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen w-full px-5 safe-area-padding">
+
+    <div class="bg-glow"></div>
+
+    <!-- ================= 视图 1：注册页 ================= -->
+    <div id="register-view" class="w-full max-w-[350px] glass-card p-8 hidden-view fade-in">
+        <div class="flex justify-center mb-7">
+            <!-- 治愈系魔法星标 SVG -->
+            <svg class="w-14 h-14 drop-shadow-sm opacity-90" viewBox="0 0 100 100">
+                <defs>
+                    <linearGradient id="magic-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#A2E0F5" />
+                        <stop offset="100%" stop-color="#FF9A94" />
+                    </linearGradient>
+                </defs>
+                <path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z" fill="url(#magic-grad)"/>
+                <circle cx="25" cy="25" r="3" fill="#FF9A94" opacity="0.6"/>
+                <circle cx="75" cy="75" r="4" fill="#A2E0F5" opacity="0.6"/>
+                <circle cx="80" cy="20" r="2" fill="#FF9A94" opacity="0.4"/>
+            </svg>
+        </div>
+        
+        <h2 class="serif text-[17px] mb-4 text-center font-light tracking-[0.2em] text-[#756C69] leading-loose">
+            生活原本沉闷<br>但跑起来就有风
+        </h2>
+        <p class="text-[11px] text-[#FF9A94] mb-8 text-center tracking-[0.25em] font-light">
+            录入信息 · 接收你的专属运势
+        </p>
+        
+        <div class="space-y-4 w-full">
+            <input type="text" id="input-name" placeholder="请输入您的昵称" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
+
+            <div class="flex space-x-3 w-full">
+                <button onclick="selectGender('male')" class="gender-btn flex-1 h-[52px] rounded-2xl border border-[#EBE6E4] text-[13px] font-light bg-white/70 shadow-sm tracking-widest">先生</button>
+                <button onclick="selectGender('female')" class="gender-btn flex-1 h-[52px] rounded-2xl border border-[#EBE6E4] text-[13px] font-light bg-white/70 shadow-sm tracking-widest">女士</button>
+            </div>
+            
+            <div class="w-full">
+                <label class="block text-[10px] text-[#AFA6A3] mb-2 ml-1 tracking-widest text-center font-light">您的出生日期</label>
+                <input type="date" id="input-date" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
+            </div>
+
+            <button onclick="saveProfile()" class="w-full h-[56px] bg-[#FF9A94] text-white rounded-2xl text-[13px] tracking-[0.35em] font-medium mt-6 active:scale-95 transition-all shadow-lg shadow-[#FF9A94]/30 hover:shadow-[#FF9A94]/50">
+                开启专属运势
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= 视图 2：缓冲页 ================= -->
+    <div id="buffer-view" class="w-full max-w-[350px] flex flex-col items-center justify-center hidden-view fade-in">
+        <div class="mb-10 breathing">
+            <svg class="w-20 h-20" viewBox="0 0 100 100">
+                <path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z" fill="url(#magic-grad)"/>
+            </svg>
+        </div>
+        <p id="buffer-text" class="serif text-[15px] font-light text-[#756C69] tracking-widest text-center leading-loose">
+            <!-- JS 动态注入 -->
+        </p>
+    </div>
+
+    <!-- ================= 视图 3：结果页 ================= -->
+    <div id="result-view" class="w-full max-w-[350px] hidden-view fade-in pb-10 mt-4">
+        
+        <div id="capture-area" class="bg-transparent p-1">
+            <div class="glass-card p-6 flex flex-col items-center relative overflow-hidden">
+                
+                <!-- 1. 顶部日期 -->
+                <div id="display-date" class="w-full text-center text-[10px] text-[#B0A7A4] tracking-[0.2em] font-light mb-6 uppercase">
+                    --.--.--
+                </div>
+
+                <!-- 2. 关键词 -->
+                <h2 id="lucky-keyword" class="serif w-full text-center text-[26px] text-[#756C69] leading-none font-bold tracking-[0.15em] mb-5">
+                    读取中
+                </h2>
+
+                <!-- 3. 主运势解读 -->
+                <div id="lucky-message" class="w-full text-[13px] text-[#756C69] leading-[1.8] text-justify mb-8 px-2 font-light">
+                    正在深度解码当日运势...
+                </div>
+
+                <!-- 4. 专属标识与幸运指数 -->
+                <div class="w-full flex flex-col items-center border-t border-[#F0EBE9] pt-6 mb-7">
+                    <span id="display-name-fortune" class="text-[12px] text-[#FF9A94] tracking-widest font-medium mb-3">
+                        -- 的今日运势
+                    </span>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-[10px] text-[#A2E0F5] tracking-widest uppercase font-bold">幸运指数</span>
+                        <div id="star-container" class="flex space-x-0.5">
+                            <!-- JS 动态生成魔法星 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 宜忌锦囊 -->
+                <div class="w-full grid grid-cols-2 gap-3 mb-6">
+                    <div class="bg-[#A2E0F5]/10 p-3.5 rounded-2xl border border-[#A2E0F5]/30 text-center">
+                        <p class="text-[9px] text-[#63C1E3] font-bold mb-1.5 tracking-widest uppercase">宜 / Do</p>
+                        <p id="advice-do" class="text-[11px] text-[#5D5451] font-medium truncate">--</p>
+                    </div>
+                    <div class="bg-[#FF9A94]/10 p-3.5 rounded-2xl border border-[#FF9A94]/30 text-center">
+                        <p class="text-[9px] text-[#FA8F79] font-bold mb-1.5 tracking-widest uppercase">忌 / Avoid</p>
+                        <p id="advice-dont" class="text-[11px] text-[#5D5451] font-medium truncate">--</p>
+                    </div>
+                </div>
+
+                <!-- 6. 玄学方阵 -->
+                <div class="grid grid-cols-4 gap-2 w-full">
+                    <div class="bg-white/60 py-2.5 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[54px]">
+                        <p class="text-[8px] text-[#B0A7A4] mb-1 scale-90">食物</p>
+                        <p id="meta-food" class="text-[10px] font-bold text-[#756C69] leading-tight">--</p>
+                    </div>
+                    <div class="bg-white/60 py-2.5 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[54px]">
+                        <p class="text-[8px] text-[#B0A7A4] mb-1 scale-90">数字</p>
+                        <p id="meta-num" class="text-[10px] font-bold text-[#756C69] leading-tight">--</p>
+                    </div>
+                    <div class="bg-white/60 py-2.5 rounded-xl text-center border border-white flex flex-col items-center justify-center shadow-sm h-[54px]">
+                        <p class="text-[8px] text-[#B0A7A4] mb-1 scale-90">颜色</p>
+                        <div id="meta-color-block" class="w-3.5 h-3.5 rounded-full border border-white shadow-sm"></div>
+                    </div>
+                    <div class="bg-white/60 py-2.5 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[54px]">
+                        <p class="text-[8px] text-[#B0A7A4] mb-1 scale-90">方位</p>
+                        <p id="meta-dir" class="text-[10px] font-bold text-[#756C69] leading-tight">--</p>
+                    </div>
+                </div>
+
+                <!-- 7. 底部随机警示与细节 -->
+                <div id="lucky-warning" class="w-full mt-7 pt-5 border-t border-dashed border-[#F0EBE9] text-[11px] text-[#AFA6A3] leading-[1.8] text-justify font-light">
+                    <!-- JS 动态注入随机警示 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部操作按钮 -->
+        <div class="flex space-x-3 mt-6 px-1">
+            <button onclick="localStorage.clear(); location.reload();" class="flex-1 h-[48px] bg-white/50 text-[10px] text-[#9B928F] rounded-xl font-light tracking-widest border border-white backdrop-blur-sm transition-colors hover:bg-white/80">
+                重置信息
+            </button>
+            <button onclick="generatePoster()" class="flex-[2] h-[48px] bg-[#FF9A94] text-[12px] text-white tracking-widest uppercase font-medium rounded-xl shadow-lg shadow-[#FF9A94]/30 active:scale-95 transition-transform">
+                生成运势签
+            </button>
+        </div>
+    </div>
+
+    <!-- 海报弹窗 -->
+    <div id="poster-modal" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6 fade-in">
+        <p class="text-white/90 text-xs mb-6 tracking-[0.2em] font-light">长按图片保存 · 转发朋友圈</p>
+        <img id="generated-image" class="w-full max-w-[320px] rounded-[24px] shadow-2xl mb-8 border-[4px] border-white/20">
+        <button onclick="closePoster()" class="w-12 h-12 rounded-full bg-white/20 text-white flex items-center justify-center backdrop-blur-md border border-white/30 active:bg-white/40 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    </div>
+
+    <script>
+        /* =========================================
+           核心算法区
+           ========================================= */
+        function mulberry32(a) {
+            return function() {
+              var t = a += 0x6D2B79F5;
+              t = Math.imul(t ^ t >>> 15, t | 1);
+              t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+              return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            }
+        }
+
+        function getDayOfYear() {
+            const now = new Date();
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff = now - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        }
+
+        const DB = {
+            // 已扩容：共 40 条深度文案
+            main:[
+                { kw: "洞悉真伪", msg: "今天会有一些事件让你看清事实。你会看清的可能是自己的实力、性格，或者是竞争对手的背景。清醒地面对问题，对你今后的事业会更好。", score: 3 },
+                { kw: "幸运降临", msg: "过去两周的焦虑将在今天得到缓解。你会收到一个期待已久的反馈，或者在人际关系上取得突破。请保持这种松弛感，好运更偏爱放松的人。", score: 5 },
+                { kw: "静水流深", msg: "外界的喧嚣会减少，让你有机会审视自己的内核。看清局势后不要气馁，此时的‘知己知彼’比盲目自信要有力得多。", score: 3 },
+                { kw: "破局之日", msg: "今天是一个极其适合做决定的日子。那些困扰你许久的犹豫不决，今天会因为一个小插曲而让你瞬间看清方向。相信直觉。", score: 5 },
+                { kw: "以退为进", msg: "如果感到阻力很大，不妨暂停一下。今天的运势显示‘强攻’并非上策，展示你的耐心和包容力，反而能获得意外的支持者。", score: 4 },
+                { kw: "灵感迸发", msg: "你的大脑今天异常活跃，甚至能在发呆时捕捉到绝妙的创意。请随身带个备忘录，这个点子可能价值千金。", score: 5 },
+                { kw: "遇见贵人", msg: "在不经意的闲聊中，你可能会遇到能指点你迷津的人。保持开放和谦逊，对方的一句话可能让你少走半年弯路。", score: 4 },
+                { kw: "断舍离", msg: "今天适合清理。不仅仅是房间的杂物，更是手机里无效的社交和内心积压的情绪。腾出空间，好运才能进来。", score: 3 },
+                { kw: "虽然辛苦", msg: "今天可能会有些忙乱，但这正是你能力边界扩张的证明。咬牙坚持过后的成就感，会比任何时候都甜。", score: 3 },
+                { kw: "意外之喜", msg: "转角遇到的小确幸。可能是一杯好喝的咖啡，或者是一个久违朋友的问候。生活的美好往往藏在缝隙里。", score: 4 },
+                { kw: "专注当下", msg: "不要为尚未发生的事情焦虑。今天把注意力收回，只做眼前最重要的一件事，效率会高得让你惊讶。", score: 4 },
+                { kw: "情绪转折", msg: "下午可能会有一阵莫名的烦躁，允许它存在，喝杯水走动一下。过了那个节点，你会发现事情根本没那么糟。", score: 3 },
+                { kw: "被看见的努力", msg: "你默默付出的努力其实一直有人看在眼里。今天大概率会收到一句真诚的夸奖，请坦然且自信地接受它。", score: 5 },
+                { kw: "蓄势待发", msg: "现在的停滞只是假象，你正在像海绵一样吸收养分。别急着要结果，打好基础，接下来的爆发会很惊人。", score: 4 },
+                { kw: "适度示弱", msg: "一个人扛下所有并不是最优解。今天试着向信任的人寻求一次帮助，你会发现人际关系反而因此变得更紧密。", score: 4 },
+                { kw: "避开雷区", msg: "今天遇到争论时，请务必管住嘴。赢了口舌之快可能会输掉更大的机会，微笑倾听是你今天最好的防御武器。", score: 3 },
+                { kw: "能量回血", msg: "连续的消耗让你有些疲惫。今晚请务必推掉不必要的应酬，泡个澡或早点休息，明天你需要一个满电的自己。", score: 3 },
+                { kw: "突破舒适区", msg: "会有一个稍微超出你目前能力范畴的任务落到头上。别慌，这就是宇宙在暗示你：你准备好了，接住它！", score: 5 },
+                { kw: "财运小高峰", msg: "今天的财务直觉很准，可能会发现一个省钱的妙招，或者在理财、副业上得到一个极具启发性的信息。", score: 4 },
+                { kw: "倾听直觉", msg: "如果某件事在逻辑上完美，但你心里总觉得哪里不对劲，请相信直觉。稍微缓一缓，真相会自己浮出水面。", score: 4 },
+                { kw: "课题分离", msg: "别人的情绪是别人的事，不要习惯性地把周围人的不开心揽到自己身上。划清边界，你会感到前所未有的轻松。", score: 3 },
+                { kw: "拥抱变化", msg: "原定的计划可能会被打乱。先别急着生气，顺应这个变动，你会发现新路线上的风景比原来那条更好。", score: 4 },
+                { kw: "满载而归", msg: "今天的执行力爆棚！那些拖延了很久的待办事项，今天都能摧枯拉朽般解决掉，晚上的心情会爽到飞起。", score: 5 },
+                { kw: "留白的力量", msg: "把日程表排满只会让你窒息。今天试着给自己留出哪怕半小时的‘无所事事’时间，灵感往往就在这个时候降临。", score: 3 },
+                { kw: "贵在坚持", msg: "你正在做的事情正处于黎明前的黑暗。不要在今天放弃，再咬牙往前走两步，拐点就在眼前。", score: 4 },
+                { kw: "随机掉落缘分", msg: "今天可能会和一个原本不熟的人产生深度交流，你们的频率出奇地契合。这可能会成为一段重要关系的新起点。", score: 5 },
+                { kw: "停止内耗", msg: "脑海里预演的一百种糟糕结局，大概率都不会发生。把胡思乱想的精力用来做五分钟的实事，焦虑就能立刻瓦解。", score: 3 },
+                { kw: "高光时刻", msg: "今天你将成为人群中的焦点。不管是开会发言还是公开表达，请放大你的音量，你的观点值得被所有人听到。", score: 5 },
+                { kw: "换位思考", msg: "遇到沟通瓶颈时，试着站在对方的利益角度想一想。当你帮对方解决了顾虑，你的诉求自然也会被顺水推舟地满足。", score: 4 },
+                { kw: "看紧钱包", msg: "今天的消费冲动有点强。看到‘限时折扣’或被别人强力种草时，请让商品在购物车里躺满24小时再做决定。", score: 2 },
+                { kw: "顺水推舟", msg: "不要和趋势作对。今天如果发现事情进展得比想象中顺利，不要怀疑，大胆顺着惯性往前推就好。", score: 5 },
+                { kw: "整理思绪", msg: "脑子太乱的时候，拿出一张白纸，把所有的烦恼写下来。视觉化会让复杂的问题瞬间变简单，答案也就明朗了。", score: 3 },
+                { kw: "意外重逢", msg: "可能会听到旧友的消息，或者在街角遇到许久未见的人。过去的羁绊会给你带来新的启发，甚至是新的机会。", score: 4 },
+                { kw: "稳扎稳打", msg: "今天不适合玩心跳或搞大创新。按部就班地走完每一个流程，保证不出错，就是今天最大的成功。", score: 3 },
+                { kw: "吸引力法则", msg: "你散发什么能量，就会吸引什么人。今天请保持嘴角上扬，把你最阳光的一面展现出来，好运会像磁铁一样被你吸过来。", score: 5 },
+                { kw: "勇敢说不", msg: "今天对那个不合理的要求勇敢拒绝吧！你会惊讶地发现，别人不仅没有生气，反而对你多了一分尊重。", score: 4 },
+                { kw: "慢半拍", msg: "收到信息或者听到批评时，让子弹飞一会。延迟三秒钟再回复，能帮你避开99%的冲动与后悔。", score: 3 },
+                { kw: "乘风破浪", msg: "前期积累的势能终于爆发了！今天你会感觉做什么都如有神助，趁着这股劲头，去拿下那个你一直渴望的目标吧！", score: 5 },
+                { kw: "原谅自己", msg: "为过去的某个小失误而耿耿于怀毫无意义。今天请对自己宽容一点，翻过那一页，你才能轻装上阵迎接明天。", score: 3 },
+                { kw: "豁然开朗", msg: "某个一直困扰你的死胡同，今天会突然被一条新信息打通。就像拼图找到了最后一块，一切都变得合情合理了。", score: 5 }
+            ],
+            warnings:[
+                "由于存在关联性，可能会产生关联数。可能在工作场所移动，法律上可能会产生官司，所以需要彻底管理每件事。小心，你可能会犯错或轻举妄动。另外，由于性别问题，你可能会伤心。",
+                "今日容易在细节上得到他人的帮助，但也容易因为粗心遗漏重要物品。职场中会有新的机会显现，但不宜声张，默默把握即可。",
+                "合作关系可能面临隐性考验，沟通时请尽量柔软。切忌在下午时段做冲动的决定。今日适合独自处理文书工作，屏蔽外界干扰。",
+                "出行或走动中可能会遇到意外的惊喜，但也要防范突发的天气变化。言语间注意分寸，以免无意中触碰别人的底线。",
+                "财务上需警惕冲动消费，尤其是在听取他人推荐时。感情中容易因小事产生摩擦，退一步海阔天空。",
+                "如果感觉到疲惫，请允许自己停下来休息。今天的直觉非常敏锐，如果觉得某件事不对劲，请相信你的第一感觉。"
+            ],
+            dos:["喝杯温水","整理桌面","早睡一小时","给家人电话","深度阅读","修剪指甲","晒晒太阳","冥想五分钟","记录灵感","吃顿好的","复盘计划","听首老歌","更换壁纸","清理相册","大口呼吸","赞美他人","写下目标","伸个懒腰","保持微笑","拒绝内耗","立刻行动","买束鲜花","看场电影","泡个热水澡"],
+            donts:["急于反驳","深夜emo","暴饮暴食","久坐不动","盲目跟风","过度承诺","在此刻放弃","翻旧账","预支焦虑","情绪消费","轻信流言","自我怀疑","犹豫不决","沉迷短视频","空腹喝咖","硬碰硬","比较他人","抱怨生活","熬夜追剧","忽视早餐","乱发脾气","透支信用卡"],
+            foods:["冰美式","马卡龙","黑巧克力","茉莉茶","温牛奶","三文鱼","牛油果","蓝莓","贝果","关东煮","小馄饨","热拿铁","红豆沙","烤红薯","气泡水","蔬菜沙拉","草莓慕斯","清粥小菜","薄荷糖","坚果","橙子","酸奶","蛋挞","燕麦拿铁"],
+            colors:[
+                {hex:"#A2E0F5", name:"梦幻粉蓝"}, {hex:"#FF9A94", name:"珊瑚柔粉"}, {hex:"#FFF59D", name:"星光淡黄"}, {hex:"#C5E1A5", name:"薄荷浅绿"}, 
+                {hex:"#B39DDB", name:"薰衣草紫"}, {hex:"#FFCC80", name:"蜜桃暖橘"}, {hex:"#80CBC4", name:"海浪青蓝"}, {hex:"#F48FB1", name:"樱花淡粉"},
+                {hex:"#E6EE9C", name:"青柠果绿"}, {hex:"#9FA8DA", name:"暮光灰蓝"}, {hex:"#FFAB91", name:"晚霞暖橘"}, {hex:"#CE93D8", name:"紫丁香色"}
+            ],
+            dirs:["正东","正西","正南","正北","东南","东北","西南","西北"]
+        };
+
+        /* =========================================
+           逻辑交互区
+           ========================================= */
+        let selectedGender = '';
+
+        function selectGender(g) {
+            selectedGender = g;
+            document.querySelectorAll('.gender-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        function generateFortune(user) {
+            const today = new Date();
+            const nameCode = user.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const bdayCode = new Date(user.bday).getDate(); 
+            const userHash = nameCode + bdayCode + (user.gender === 'male' ? 1 : 2);
+
+            const dayOfYear = getDayOfYear();
+            const mainIdx = (userHash + dayOfYear) % DB.main.length;
+            const main = DB.main[mainIdx];
+
+            const dateStr = `${today.getFullYear()}${today.getMonth()}${today.getDate()}`;
+            const seedVal = parseInt(dateStr) + userHash; 
+            const rng = mulberry32(seedVal); 
+
+            const warningIdx = Math.floor(rng() * DB.warnings.length);
+            const doIdx = Math.floor(rng() * DB.dos.length);
+            let dontIdx = Math.floor(rng() * DB.donts.length);
+            if(DB.dos[doIdx] === DB.donts[dontIdx]) dontIdx = (dontIdx + 1) % DB.donts.length;
+
+            const foodIdx = Math.floor(rng() * DB.foods.length);
+            const colorIdx = Math.floor(rng() * DB.colors.length);
+            const dirIdx = Math.floor(rng() * DB.dirs.length);
+            const luckyNum = Math.floor(rng() * 10);
+
+            return {
+                main: main, 
+                warning: DB.warnings[warningIdx],
+                do: DB.dos[doIdx], dont: DB.donts[dontIdx],
+                food: DB.foods[foodIdx], color: DB.colors[colorIdx], dir: DB.dirs[dirIdx], num: luckyNum
+            };
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('input-name').value.trim();
+            const bday = document.getElementById('input-date').value;
+            if (!name || !bday || !selectedGender) return alert("请完整填写信息，以校准磁场");
+            
+            localStorage.setItem('lucky_user', JSON.stringify({ name, bday, gender: selectedGender }));
+            startBuffering();
+        }
+
+        function startBuffering() {
+            document.getElementById('register-view').classList.add('hidden-view');
+            document.getElementById('result-view').classList.add('hidden-view');
+            document.getElementById('buffer-view').classList.remove('hidden-view');
+            
+            const user = JSON.parse(localStorage.getItem('lucky_user'));
+            
+            document.getElementById('buffer-text').innerHTML = 
+                `正在确认<br><span class="font-normal text-[#FF9A94] text-lg mx-1">${user.name}</span>的运势`;
+            
+            setTimeout(showResult, 1800); 
+        }
+
+        function showResult() {
+            document.getElementById('buffer-view').classList.add('hidden-view');
+            document.getElementById('result-view').classList.remove('hidden-view');
+            
+            const user = JSON.parse(localStorage.getItem('lucky_user'));
+            
+            const today = new Date();
+            const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+            document.getElementById('display-date').innerText = dateString;
+            
+            document.getElementById('display-name-fortune').innerText = `${user.name} 的今日运势`;
+
+            const res = generateFortune(user);
+            
+            document.getElementById('lucky-keyword').innerText = res.main.kw;
+            document.getElementById('lucky-message').innerText = res.main.msg;
+            document.getElementById('lucky-warning').innerText = res.warning; 
+            
+            document.getElementById('advice-do').innerText = res.do;
+            document.getElementById('advice-dont').innerText = res.dont;
+            
+            document.getElementById('meta-num').innerText = res.num;
+            document.getElementById('meta-food').innerText = res.food;
+            document.getElementById('meta-dir').innerText = res.dir;
+            document.getElementById('meta-color-block').style.backgroundColor = res.color.hex;
+            
+            const container = document.getElementById('star-container');
+            container.innerHTML = '';
+            for(let i=1; i<=5; i++) {
+                const isFull = i <= res.main.score;
+                container.innerHTML += `
+                    <svg class="star-icon ${isFull ? 'star-full' : 'star-empty'}" viewBox="0 0 100 100">
+                        <path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z" />
+                    </svg>`;
+            }
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('lucky_user')) {
+                startBuffering(); 
+            } else {
+                document.getElementById('register-view').classList.remove('hidden-view'); 
+            }
+        };
+
+        function generatePoster() {
+            const element = document.getElementById('capture-area');
+            element.classList.add('poster-mode');
+
+            html2canvas(element, { 
+                backgroundColor: "#FDFCFB", 
+                scale: 2.5, 
+                useCORS: true
+            }).then(canvas => {
+                element.classList.remove('poster-mode');
+                document.getElementById('generated-image').src = canvas.toDataURL("image/png");
+                document.getElementById('poster-modal').classList.remove('hidden');
+            });
+        }
+
+        function closePoster() {
+            document.getElementById('poster-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
