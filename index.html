@@ -67,7 +67,8 @@
             box-shadow: 0 6px 16px rgba(255, 154, 148, 0.3);
         }
         
-        .star-icon { width: 18px; height: 18px; display: inline-block; transition: all 0.4s; }
+        /* 魔法星样式 */
+        .star-icon-large { width: 28px; height: 28px; display: inline-block; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .star-full { fill: var(--coral-pink); }
         .star-empty { fill: #F0EBE9; }
         
@@ -83,6 +84,10 @@
         .breathing { animation: breath 2.5s infinite ease-in-out; }
         @keyframes breath { 0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 10px rgba(162,224,245,0.4)); } 50% { opacity: 0.8; transform: scale(0.96); filter: drop-shadow(0 0 2px rgba(162,224,245,0.1)); } }
 
+        /* 缓冲页进度星星动画 */
+        .star-icon-small { width: 14px; height: 14px; display: inline-block; fill: #F0EBE9; }
+        @keyframes loadStar { 50% { fill: var(--coral-pink); transform: scale(1.2); } }
+
         /* 海报模式强制样式 */
         .poster-mode { border-radius: 0 !important; box-shadow: none !important; background: #FDFCFB !important; padding-bottom: 30px; border: none !important; }
         #poster-modal { background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); }
@@ -95,7 +100,6 @@
     <!-- ================= 视图 1：注册页 ================= -->
     <div id="register-view" class="w-full max-w-[350px] glass-card p-8 hidden-view fade-in">
         <div class="flex justify-center mb-7">
-            <!-- 治愈系魔法星标 SVG -->
             <svg class="w-14 h-14 drop-shadow-sm opacity-90" viewBox="0 0 100 100">
                 <defs>
                     <linearGradient id="magic-grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -130,7 +134,7 @@
                 <input type="date" id="input-date" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
             </div>
 
-            <button onclick="saveProfile()" class="w-full h-[56px] bg-[#FF9A94] text-white rounded-2xl text-[13px] tracking-[0.35em] font-medium mt-6 active:scale-95 transition-all shadow-lg shadow-[#FF9A94]/30 hover:shadow-[#FF9A94]/50">
+            <button onclick="saveProfile()" class="w-full h-[56px] bg-[#FF9A94] text-white rounded-2xl text-[15px] tracking-[0.3em] font-medium mt-6 active:scale-95 transition-all shadow-lg shadow-[#FF9A94]/30 hover:shadow-[#FF9A94]/50">
                 开启专属运势
             </button>
         </div>
@@ -138,14 +142,24 @@
 
     <!-- ================= 视图 2：缓冲页 ================= -->
     <div id="buffer-view" class="w-full max-w-[350px] flex flex-col items-center justify-center hidden-view fade-in">
-        <div class="mb-10 breathing">
+        <div class="mb-6 breathing">
             <svg class="w-20 h-20" viewBox="0 0 100 100">
                 <path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z" fill="url(#magic-grad)"/>
             </svg>
         </div>
+        
         <p id="buffer-text" class="serif text-[15px] font-light text-[#756C69] tracking-widest text-center leading-loose">
-            <!-- JS 动态注入 -->
+            <!-- JS 动态注入 (仅显示昵称) -->
         </p>
+
+        <!-- 魔法星进度提示 (已删除下方提示语) -->
+        <div class="flex space-x-1.5 mt-5">
+            <svg class="star-icon-small" style="animation: loadStar 1.5s infinite 0.0s" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+            <svg class="star-icon-small" style="animation: loadStar 1.5s infinite 0.2s" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+            <svg class="star-icon-small" style="animation: loadStar 1.5s infinite 0.4s" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+            <svg class="star-icon-small" style="animation: loadStar 1.5s infinite 0.6s" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+            <svg class="star-icon-small" style="animation: loadStar 1.5s infinite 0.8s" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+        </div>
     </div>
 
     <!-- ================= 视图 3：结果页 ================= -->
@@ -160,62 +174,60 @@
                 </div>
 
                 <!-- 2. 关键词 -->
-                <h2 id="lucky-keyword" class="serif w-full text-center text-[26px] text-[#756C69] leading-none font-bold tracking-[0.15em] mb-5">
+                <h2 id="lucky-keyword" class="serif w-full text-center text-[22px] text-[#756C69] leading-none font-bold tracking-[0.15em] mb-5">
                     读取中
                 </h2>
 
-                <!-- 3. 主运势解读 -->
-                <div id="lucky-message" class="w-full text-[13px] text-[#756C69] leading-[1.8] text-justify mb-8 px-2 font-light">
+                <!-- 3. 主运势解读 (字体放大到14px) -->
+                <div id="lucky-message" class="w-full text-[14px] text-[#756C69] leading-[1.8] text-justify mb-7 px-2 font-light">
                     正在深度解码当日运势...
                 </div>
 
-                <!-- 4. 专属标识与幸运指数 -->
-                <div class="w-full flex flex-col items-center border-t border-[#F0EBE9] pt-6 mb-7">
-                    <span id="display-name-fortune" class="text-[12px] text-[#FF9A94] tracking-widest font-medium mb-3">
+                <!-- 4. 专属标识与魔法星指数 -->
+                <div class="w-full flex flex-col items-center border-t border-[#F0EBE9] pt-7 mb-8">
+                    <!-- 改为“XX的今日运势”，颜色变为深灰 text-[#756C69] -->
+                    <span id="display-name-fortune" class="text-[13px] text-[#756C69] tracking-widest font-bold mb-4">
                         -- 的今日运势
                     </span>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-[10px] text-[#A2E0F5] tracking-widest uppercase font-bold">幸运指数</span>
-                        <div id="star-container" class="flex space-x-0.5">
-                            <!-- JS 动态生成魔法星 -->
-                        </div>
+                    <div id="star-container" class="flex space-x-1.5">
+                        <!-- JS 动态生成大号魔法星 -->
                     </div>
                 </div>
 
                 <!-- 5. 宜忌锦囊 -->
                 <div class="w-full grid grid-cols-2 gap-3 mb-6">
-                    <div class="bg-[#A2E0F5]/10 p-3.5 rounded-2xl border border-[#A2E0F5]/30 text-center">
-                        <p class="text-[9px] text-[#63C1E3] font-bold mb-1.5 tracking-widest uppercase">宜 / Do</p>
-                        <p id="advice-do" class="text-[11px] text-[#5D5451] font-medium truncate">--</p>
+                    <div class="bg-[#A2E0F5]/10 p-4 rounded-2xl border border-[#A2E0F5]/30 text-center">
+                        <p class="text-[10px] text-[#63C1E3] font-bold mb-2 tracking-widest uppercase">宜 / Do</p>
+                        <p id="advice-do" class="text-[13px] text-[#5D5451] font-medium truncate">--</p>
                     </div>
-                    <div class="bg-[#FF9A94]/10 p-3.5 rounded-2xl border border-[#FF9A94]/30 text-center">
-                        <p class="text-[9px] text-[#FA8F79] font-bold mb-1.5 tracking-widest uppercase">忌 / Avoid</p>
-                        <p id="advice-dont" class="text-[11px] text-[#5D5451] font-medium truncate">--</p>
+                    <div class="bg-[#FF9A94]/10 p-4 rounded-2xl border border-[#FF9A94]/30 text-center">
+                        <p class="text-[10px] text-[#FA8F79] font-bold mb-2 tracking-widest uppercase">忌 / Avoid</p>
+                        <p id="advice-dont" class="text-[13px] text-[#5D5451] font-medium truncate">--</p>
                     </div>
                 </div>
 
                 <!-- 6. 玄学方阵 -->
                 <div class="grid grid-cols-4 gap-2 w-full">
-                    <div class="bg-white/60 py-2.5 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[54px]">
-                        <p class="text-[8px] text-[#B0A7A4] mb-1 scale-90">食物</p>
-                        <p id="meta-food" class="text-[10px] font-bold text-[#756C69] leading-tight">--</p>
+                    <div class="bg-white/60 py-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[64px]">
+                        <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">食物</p>
+                        <p id="meta-food" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
                     </div>
-                    <div class="bg-white/60 py-2.5 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[54px]">
-                        <p class="text-[8px] text-[#B0A7A4] mb-1 scale-90">数字</p>
-                        <p id="meta-num" class="text-[10px] font-bold text-[#756C69] leading-tight">--</p>
+                    <div class="bg-white/60 py-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[64px]">
+                        <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">数字</p>
+                        <p id="meta-num" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
                     </div>
-                    <div class="bg-white/60 py-2.5 rounded-xl text-center border border-white flex flex-col items-center justify-center shadow-sm h-[54px]">
-                        <p class="text-[8px] text-[#B0A7A4] mb-1 scale-90">颜色</p>
-                        <div id="meta-color-block" class="w-3.5 h-3.5 rounded-full border border-white shadow-sm"></div>
+                    <div class="bg-white/60 py-3 rounded-xl text-center border border-white flex flex-col items-center justify-center shadow-sm h-[64px]">
+                        <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">颜色</p>
+                        <div id="meta-color-block" class="w-4 h-4 rounded-full border border-white shadow-sm"></div>
                     </div>
-                    <div class="bg-white/60 py-2.5 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[54px]">
-                        <p class="text-[8px] text-[#B0A7A4] mb-1 scale-90">方位</p>
-                        <p id="meta-dir" class="text-[10px] font-bold text-[#756C69] leading-tight">--</p>
+                    <div class="bg-white/60 py-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[64px]">
+                        <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">方位</p>
+                        <p id="meta-dir" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
                     </div>
                 </div>
 
                 <!-- 7. 底部随机警示与细节 -->
-                <div id="lucky-warning" class="w-full mt-7 pt-5 border-t border-dashed border-[#F0EBE9] text-[11px] text-[#AFA6A3] leading-[1.8] text-justify font-light">
+                <div id="lucky-warning" class="w-full mt-7 pt-5 border-t border-dashed border-[#F0EBE9] text-[12.5px] text-[#AFA6A3] leading-[1.8] text-justify font-light">
                     <!-- JS 动态注入随机警示 -->
                 </div>
             </div>
@@ -263,7 +275,6 @@
         }
 
         const DB = {
-            // 已扩容：共 40 条深度文案
             main:[
                 { kw: "洞悉真伪", msg: "今天会有一些事件让你看清事实。你会看清的可能是自己的实力、性格，或者是竞争对手的背景。清醒地面对问题，对你今后的事业会更好。", score: 3 },
                 { kw: "幸运降临", msg: "过去两周的焦虑将在今天得到缓解。你会收到一个期待已久的反馈，或者在人际关系上取得突破。请保持这种松弛感，好运更偏爱放松的人。", score: 5 },
@@ -400,6 +411,7 @@
             const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
             document.getElementById('display-date').innerText = dateString;
             
+            // 已更新为：XX 的今日运势，颜色深灰
             document.getElementById('display-name-fortune').innerText = `${user.name} 的今日运势`;
 
             const res = generateFortune(user);
@@ -421,7 +433,7 @@
             for(let i=1; i<=5; i++) {
                 const isFull = i <= res.main.score;
                 container.innerHTML += `
-                    <svg class="star-icon ${isFull ? 'star-full' : 'star-empty'}" viewBox="0 0 100 100">
+                    <svg class="star-icon-large ${isFull ? 'star-full' : 'star-empty'}" viewBox="0 0 100 100">
                         <path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z" />
                     </svg>`;
             }
