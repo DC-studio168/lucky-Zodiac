@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>今日专属运势</title>
-    <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 html2canvas 用于生成海报 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- 引入高质感细字体 -->
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     
     <style>
@@ -18,10 +16,17 @@
             --coral-pink: #FF9A94;    
             --text-main: #756C69;     
             --bg-pearl: #FDFCFB;      
+            
+            /* 五行莫兰迪色 */
+            --wood: #86C166;
+            --fire: #E16B8C;
+            --earth: #DDA52D;
+            --metal: #A4A4A8;
+            --water: #58B2DC;
         }
         
         body { 
-            font-family: 'Inter', -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; 
+            font-family: 'Inter', -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
             background-color: var(--bg-pearl); 
             color: var(--text-main); 
             overscroll-behavior: none; 
@@ -32,17 +37,17 @@
         
         /* --- 柔和毛玻璃卡片 --- */
         .glass-card { 
-            background: rgba(255, 255, 255, 0.85); 
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(30px); 
             -webkit-backdrop-filter: blur(30px); 
             border: 1px solid rgba(255, 255, 255, 0.9); 
-            border-radius: 36px; 
+            border-radius: 36px;
             box-shadow: 0 20px 50px -10px rgba(162, 224, 245, 0.35); 
         }
         
         /* --- 背景极慢呼吸光晕 --- */
         .bg-glow { 
-            position: fixed; 
+            position: fixed;
             width: 150vw; 
             height: 150vw; 
             top: -25%; 
@@ -61,7 +66,7 @@
         /* --- 交互组件 --- */
         .gender-btn { transition: all 0.3s ease; color: #9B928F; }
         .gender-btn.active { 
-            background: var(--coral-pink); 
+            background: var(--coral-pink);
             color: white; 
             border-color: var(--coral-pink); 
             box-shadow: 0 6px 16px rgba(255, 154, 148, 0.3);
@@ -72,33 +77,48 @@
         .star-full { fill: var(--coral-pink); }
         .star-empty { fill: #F0EBE9; }
         
-        input[type="text"], input[type="date"] {
+        input[type="text"], input[type="date"], select {
             -webkit-appearance: none;
             border-radius: 16px;
             font-size: 15px; 
             color: var(--text-main);
         }
-        input:focus { outline: none; border-color: var(--horse-blue); background: white; box-shadow: 0 0 0 3px rgba(162, 224, 245, 0.2); }
+        input:focus, select:focus { outline: none; border-color: var(--horse-blue); background: white; box-shadow: 0 0 0 3px rgba(162, 224, 245, 0.2); }
         input::placeholder { color: #CDC7C5; font-weight: 300; }
         
         .breathing { animation: breath 2.5s infinite ease-in-out; }
         @keyframes breath { 0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 10px rgba(162,224,245,0.4)); } 50% { opacity: 0.8; transform: scale(0.96); filter: drop-shadow(0 0 2px rgba(162,224,245,0.1)); } }
 
-        /* 缓冲页进度星星动画 */
         .star-icon-small { width: 14px; height: 14px; display: inline-block; fill: #F0EBE9; }
         @keyframes loadStar { 50% { fill: var(--coral-pink); transform: scale(1.2); } }
 
-        /* 海报模式强制样式 */
         .poster-mode { border-radius: 0 !important; box-shadow: none !important; background: #FDFCFB !important; padding-bottom: 30px; border: none !important; }
         #poster-modal { background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); }
+
+        /* --- 命盘专属样式调整 --- */
+        .bazi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
+        .bazi-item { background: rgba(255,255,255,0.6); border: 1px solid #F0EBE9; border-radius: 12px; padding: 12px 0; text-align: center; }
+        .bazi-label { font-size: 10px; color: #B0A7A4; margin-bottom: 6px; }
+        .bazi-text { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--text-main);}
+        .bazi-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #F0EBE9; color: var(--text-main); display: inline-block;}
+        
+        .bar-row { display: flex; align-items: center; margin-bottom: 12px; }
+        .bar-name { width: 22px; font-size: 13px; font-weight: 600; }
+        .bar-dot { width: 16px; height: 16px; border-radius: 50%; margin-right: 10px; }
+        .bar-track { flex: 1; height: 8px; background: rgba(240,235,233,0.5); border-radius: 4px; margin-right: 12px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; }
+        .bar-num { width: 16px; text-align: right; font-size: 13px; font-weight: 500; color: var(--text-main); }
+        
+        .pill { background: rgba(162, 224, 245, 0.2); color: var(--text-main); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; margin: 0 2px; }
+        .tag-group { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
+        .tag { background: white; color: var(--text-main); font-size: 12px; padding: 4px 12px; border-radius: 16px; border: 1px solid #F0EBE9;}
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen w-full px-5 safe-area-padding">
+<body class="flex flex-col items-center min-h-screen w-full px-5 safe-area-padding py-8">
 
     <div class="bg-glow"></div>
 
-    <!-- ================= 视图 1：注册页 ================= -->
-    <div id="register-view" class="w-full max-w-[350px] glass-card p-8 hidden-view fade-in">
+    <div id="register-view" class="w-full max-w-[350px] glass-card p-8 hidden-view fade-in m-auto">
         <div class="flex justify-center mb-7">
             <svg class="w-14 h-14 drop-shadow-sm opacity-90" viewBox="0 0 100 100">
                 <defs>
@@ -130,8 +150,26 @@
             </div>
             
             <div class="w-full">
-                <label class="block text-[10px] text-[#AFA6A3] mb-2 ml-1 tracking-widest text-center font-light">您的出生日期</label>
+                <label class="block text-[10px] text-[#AFA6A3] mb-2 ml-1 tracking-widest text-center font-light">您的公历出生日期</label>
                 <input type="date" id="input-date" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
+            </div>
+
+            <div class="w-full">
+                <label class="block text-[10px] text-[#AFA6A3] mb-2 ml-1 tracking-widest text-center font-light">您的出生时辰 (命盘所需)</label>
+                <select id="input-time" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light outline-none">
+                    <option value="0">子时 (23:00-00:59)</option>
+                    <option value="2">丑时 (01:00-02:59)</option>
+                    <option value="4">寅时 (03:00-04:59)</option>
+                    <option value="6">卯时 (05:00-06:59)</option>
+                    <option value="8">辰时 (07:00-08:59)</option>
+                    <option value="10">巳时 (09:00-10:59)</option>
+                    <option value="12">午时 (11:00-12:59)</option>
+                    <option value="14">未时 (13:00-14:59)</option>
+                    <option value="16">申时 (15:00-16:59)</option>
+                    <option value="18">酉时 (17:00-18:59)</option>
+                    <option value="20">戌时 (19:00-20:59)</option>
+                    <option value="22">亥时 (21:00-22:59)</option>
+                </select>
             </div>
 
             <button onclick="saveProfile()" class="w-full h-[56px] bg-[#FF9A94] text-white rounded-2xl text-[15px] tracking-[0.3em] font-medium mt-6 active:scale-95 transition-all shadow-lg shadow-[#FF9A94]/30 hover:shadow-[#FF9A94]/50">
@@ -140,8 +178,7 @@
         </div>
     </div>
 
-    <!-- ================= 视图 2：缓冲页 ================= -->
-    <div id="buffer-view" class="w-full max-w-[350px] flex flex-col items-center justify-center hidden-view fade-in">
+    <div id="buffer-view" class="w-full max-w-[350px] flex flex-col items-center justify-center hidden-view fade-in m-auto">
         <div class="mb-6 breathing">
             <svg class="w-20 h-20" viewBox="0 0 100 100">
                 <path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z" fill="url(#magic-grad)"/>
@@ -149,10 +186,8 @@
         </div>
         
         <p id="buffer-text" class="serif text-[15px] font-light text-[#756C69] tracking-widest text-center leading-loose">
-            <!-- JS 动态注入 (仅显示昵称) -->
-        </p>
+            </p>
 
-        <!-- 魔法星进度提示 (已删除下方提示语) -->
         <div class="flex space-x-1.5 mt-5">
             <svg class="star-icon-small" style="animation: loadStar 1.5s infinite 0.0s" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
             <svg class="star-icon-small" style="animation: loadStar 1.5s infinite 0.2s" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
@@ -162,39 +197,30 @@
         </div>
     </div>
 
-    <!-- ================= 视图 3：结果页 ================= -->
-    <div id="result-view" class="w-full max-w-[350px] hidden-view fade-in pb-10 mt-4">
+    <div id="result-view" class="w-full max-w-[350px] hidden-view fade-in m-auto pb-4 mt-4">
         
         <div id="capture-area" class="bg-transparent p-1">
             <div class="glass-card p-6 flex flex-col items-center relative overflow-hidden">
-                
-                <!-- 1. 顶部日期 -->
                 <div id="display-date" class="w-full text-center text-[10px] text-[#B0A7A4] tracking-[0.2em] font-light mb-6 uppercase">
                     --.--.--
                 </div>
 
-                <!-- 2. 关键词 -->
                 <h2 id="lucky-keyword" class="serif w-full text-center text-[22px] text-[#756C69] leading-none font-bold tracking-[0.15em] mb-5">
                     读取中
                 </h2>
 
-                <!-- 3. 主运势解读 (字体放大到14px) -->
                 <div id="lucky-message" class="w-full text-[14px] text-[#756C69] leading-[1.8] text-justify mb-7 px-2 font-light">
                     正在深度解码当日运势...
                 </div>
 
-                <!-- 4. 专属标识与魔法星指数 -->
                 <div class="w-full flex flex-col items-center border-t border-[#F0EBE9] pt-7 mb-8">
-                    <!-- 改为“XX的今日运势”，颜色变为深灰 text-[#756C69] -->
                     <span id="display-name-fortune" class="text-[13px] text-[#756C69] tracking-widest font-bold mb-4">
                         -- 的今日运势
                     </span>
                     <div id="star-container" class="flex space-x-1.5">
-                        <!-- JS 动态生成大号魔法星 -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- 5. 宜忌锦囊 -->
                 <div class="w-full grid grid-cols-2 gap-3 mb-6">
                     <div class="bg-[#A2E0F5]/10 p-4 rounded-2xl border border-[#A2E0F5]/30 text-center">
                         <p class="text-[10px] text-[#63C1E3] font-bold mb-2 tracking-widest uppercase">宜 / Do</p>
@@ -206,7 +232,6 @@
                     </div>
                 </div>
 
-                <!-- 6. 玄学方阵 -->
                 <div class="grid grid-cols-4 gap-2 w-full">
                     <div class="bg-white/60 py-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[64px]">
                         <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">食物</p>
@@ -226,14 +251,11 @@
                     </div>
                 </div>
 
-                <!-- 7. 底部随机警示与细节 -->
                 <div id="lucky-warning" class="w-full mt-7 pt-5 border-t border-dashed border-[#F0EBE9] text-[12.5px] text-[#AFA6A3] leading-[1.8] text-justify font-light">
-                    <!-- JS 动态注入随机警示 -->
-                </div>
+                    </div>
             </div>
         </div>
 
-        <!-- 底部操作按钮 -->
         <div class="flex space-x-3 mt-6 px-1">
             <button onclick="localStorage.clear(); location.reload();" class="flex-1 h-[48px] bg-white/50 text-[10px] text-[#9B928F] rounded-xl font-light tracking-widest border border-white backdrop-blur-sm transition-colors hover:bg-white/80">
                 重置信息
@@ -242,9 +264,149 @@
                 生成运势签
             </button>
         </div>
+        
+        <div class="px-1 mt-3">
+            <button onclick="showBazi()" class="w-full h-[48px] bg-[#A2E0F5]/80 text-[12px] text-white tracking-widest uppercase font-medium rounded-xl shadow-lg shadow-[#A2E0F5]/20 active:scale-95 transition-transform border border-white/50">
+                查看我的命盘
+            </button>
+        </div>
     </div>
 
-    <!-- 海报弹窗 -->
+    <div id="bazi-view" class="w-full max-w-[350px] hidden-view fade-in pb-10 mt-4 m-auto">
+        
+        <div class="glass-card p-6 mb-4 text-center">
+            <div class="text-[11px] text-[#B0A7A4] tracking-[0.2em] mb-3 uppercase">先天属性分析</div>
+            <div class="serif text-[28px] font-bold text-[#756C69] mb-4" id="r-mingge-title">--命</div>
+            <div class="text-[13px] text-[#756C69] leading-[1.8] text-justify font-light" id="r-mingge-desc">加载中...</div>
+            
+            <div class="text-[13px] font-bold text-[#756C69] mt-6 border-t border-[#F0EBE9] pt-6 flex justify-center items-center gap-2">
+                <svg class="w-4 h-4 fill-current text-[#FF9A94]" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+                八字四柱
+            </div>
+            <div class="bazi-grid" id="r-bazi-grid"></div>
+        </div>
+
+        <div class="glass-card p-6 mb-4">
+            <div class="text-[14px] font-bold text-[#756C69] mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 fill-current text-[#A2E0F5]" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+                五行力量分布
+            </div>
+            <div class="text-[12px] text-[#9B928F] mb-5 font-light" id="r-dist-desc">您的八字五行构成为：--</div>
+            <div id="r-bars" class="mb-4"></div>
+            
+            <ul class="text-[12.5px] leading-[2] text-[#9B928F] font-light bg-white/40 p-3 rounded-xl border border-white">
+                <li>五行偏旺：<span class="font-medium text-[#756C69]" id="r-wang">--</span></li>
+                <li>五行偏弱：<span class="font-medium text-[#756C69]" id="r-ruo">--</span></li>
+                <li>五行缺失：<span class="font-medium text-[#756C69]" id="r-que">--</span></li>
+                <li>整体格局：<span class="font-medium text-[#756C69]" id="r-geju">--</span></li>
+            </ul>
+        </div>
+
+        <div class="glass-card p-6 mb-4">
+            <div class="text-[14px] font-bold text-[#756C69] mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 fill-current text-[#A2E0F5]" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+                生克指南
+            </div>
+            
+            <div class="mb-6">
+                <div class="text-[12px] font-bold text-[#756C69] mb-1.5">🔄 相生 (加持能量)</div>
+                <div class="text-[11px] text-[#B0A7A4] mb-2 font-light tracking-wider">循环：木生火 → 火生土 → 土生金 → 金生水 → 水生木</div>
+                <div class="text-[12.5px] text-[#756C69] leading-[1.8] font-light bg-[#A2E0F5]/10 p-3 rounded-xl border border-[#A2E0F5]/20">
+                    您的日元属 <span class="pill" id="r-sheng-me1">--</span>，<span class="pill" id="r-sheng-logic">--</span>，因此 <span class="pill" id="r-guiren1">--</span> 为您的贵人五行，多接触可助运势提升。
+                </div>
+            </div>
+            
+            <div>
+                <div class="text-[12px] font-bold text-[#756C69] mb-1.5">⚡ 相克 (阻力来源)</div>
+                <div class="text-[11px] text-[#B0A7A4] mb-2 font-light tracking-wider">循环：金克木 → 木克土 → 土克水 → 水克火 → 火克金</div>
+                <div class="text-[12.5px] text-[#756C69] leading-[1.8] font-light bg-[#FF9A94]/10 p-3 rounded-xl border border-[#FF9A94]/20">
+                    您 <span class="pill" id="r-ke-me1">--</span> 受 <span class="pill" id="r-kemenode">--</span> 所克，因此该属性过旺之环境或行业易对您形成压力，需注意规避。
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card p-6 mb-4">
+            <div class="text-[14px] font-bold text-[#756C69] mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 fill-current text-[#FF9A94]" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+                总体运势强弱
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="bg-white/60 p-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center">
+                    <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">生肖</p>
+                    <p id="r-zodiac" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
+                </div>
+                <div class="bg-white/60 p-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center">
+                    <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">命格</p>
+                    <p id="r-mingge-grid" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
+                </div>
+                <div class="bg-white/60 p-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center">
+                    <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">贵人五行</p>
+                    <p id="r-guiren-grid" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
+                </div>
+                <div class="bg-white/60 p-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center">
+                    <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">注意五行</p>
+                    <p id="r-zhuyi-grid" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
+                </div>
+            </div>
+            
+            <div class="text-[12.5px] text-[#756C69] leading-[1.8] font-light">
+                <strong class="font-bold">优势：</strong><span id="r-adv-text">--</span><br>
+                <strong class="font-bold mt-1 inline-block">短板：</strong><span id="r-dis-text">--</span>
+            </div>
+        </div>
+
+        <div class="glass-card p-6 mb-4">
+            <div class="text-[14px] font-bold text-[#756C69] mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4 fill-current text-[#FF9A94]" viewBox="0 0 100 100"><path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z"/></svg>
+                五行开运建议
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 mb-5">
+                <div class="bg-white/60 p-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center">
+                    <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">有利颜色</p>
+                    <p id="r-luck-color" class="text-[12px] font-bold text-[#756C69] leading-tight">--</p>
+                </div>
+                <div class="bg-white/60 p-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center">
+                    <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">有利方位</p>
+                    <p id="r-luck-dir" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
+                </div>
+                <div class="bg-white/60 p-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center">
+                    <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">幸运数字</p>
+                    <p id="r-luck-num" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
+                </div>
+                <div class="bg-white/60 p-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center">
+                    <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">贵人五行</p>
+                    <p id="r-luck-guiren" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
+                </div>
+            </div>
+            
+            <div class="text-center pt-2 border-t border-[#F0EBE9]">
+                <p class="text-[11px] text-[#B0A7A4] mb-2 tracking-wider">适合行业方向</p>
+                <div class="tag-group" id="r-luck-tags"></div>
+            </div>
+        </div>
+
+        <div class="glass-card p-6 mb-4">
+            <div class="text-[15px] font-bold text-[#756C69] mb-4 flex items-center justify-center gap-2">
+                📜 综合命理结论
+            </div>
+            <div class="bg-white/40 p-5 rounded-xl border border-white text-[12.5px] leading-[1.9] text-[#756C69] text-justify font-light">
+                <div class="mb-3">根据生辰八字信息综合推算：</div>
+                <div class="mb-3">您的八字为： <span class="pill" id="c-bazi">--</span></div>
+                <div class="mb-3">日元属 <strong class="font-bold text-[#756C69]" id="c-mingge">--</strong>，<span id="c-mingge-desc">--</span></div>
+                <div class="mb-3">综合八字命理分析，您属于 <span class="pill" id="c-mingge2">--</span> 格局，五行呈现 <strong class="font-bold text-[#756C69]" id="c-geju">--</strong> 之势。<span id="c-power-desc">--</span></div>
+                <div class="mb-3">若能在生活中多接触与运势相生之五行元素（<span class="pill" id="c-guiren">--</span>），避开相克之气场环境（<span class="pill" id="c-zhuyi">--</span>），可有效提升事业、财运与情感发展。</div>
+                <div>建议多使用 <strong class="font-bold text-[#756C69]" id="c-color">--</strong> 等颜色，朝 <strong class="font-bold text-[#756C69]" id="c-dir">--</strong> 方向发展，选择与 <strong class="font-bold text-[#756C69]" id="c-guiren2">--</strong> 属性相合的行业，必能顺风顺水、事半功倍。</div>
+            </div>
+            <div class="text-center text-[10px] text-[#B0A7A4] mt-5 tracking-widest font-light">以上分析基于传统命理学 · 仅供参考探索</div>
+        </div>
+
+        <button onclick="backToResult()" class="w-full h-[52px] bg-white text-[13px] text-[#756C69] tracking-widest uppercase font-medium rounded-xl shadow-sm border border-[#EBE6E4] active:scale-95 transition-transform">
+            返回今日运势
+        </button>
+    </div>
+
     <div id="poster-modal" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6 fade-in">
         <p class="text-white/90 text-xs mb-6 tracking-[0.2em] font-light">长按图片保存 · 转发朋友圈</p>
         <img id="generated-image" class="w-full max-w-[320px] rounded-[24px] shadow-2xl mb-8 border-[4px] border-white/20">
@@ -255,7 +417,7 @@
 
     <script>
         /* =========================================
-           核心算法区
+           核心算法区：运势部分
            ========================================= */
         function mulberry32(a) {
             return function() {
@@ -337,6 +499,35 @@
         };
 
         /* =========================================
+           核心算法区：命盘部分 
+           ========================================= */
+        const elementsData = [
+            { name: '木', color: 'var(--wood)' },
+            { name: '火', color: 'var(--fire)' },
+            { name: '土', color: 'var(--earth)' },
+            { name: '金', color: 'var(--metal)' },
+            { name: '水', color: 'var(--water)' }
+        ];
+        const shengDict = { '木':'火', '火':'土', '土':'金', '金':'水', '水':'木' };
+        const keDict = { '木':'土', '土':'水', '水':'火', '火':'金', '金':'木' };
+        const shengMeDict = { '木':'水', '火':'木', '土':'火', '金':'土', '水':'金' };
+        const keMeDict = { '木':'金', '火':'水', '土':'木', '金':'火', '水':'土' };
+        const minggeTraits = {
+            '木': '木属性代表生机、仁慈与向上生长。具有极强的进取心、责任感与同理心，能在逆境中扎根生长，适应力强。',
+            '火': '火属性代表热情、礼仪与活力。慷慨大方，充满感染力，洞察力强，是人群中的光源，极具表现欲。',
+            '土': '土属性代表稳重、包容与诚信。踏实沉稳，具有极强的承载力与定力，善于变通与孕育培养，是可靠的压舱石。',
+            '金': '金属性代表刚强、果断与义气。执行力极强，追求完美，内敛且坚毅，带有突破规则的锐气与决断力。',
+            '水': '水属性代表智慧、灵活与应变力。善于思考与谋略，洞察力强，随机应变。适合变化多样的发展环境。'
+        };
+        const luckDict = {
+            '木': { color: '绿色、青色', badColor: '白色、银色', dir: '东方', num: '3、8', ind: ['教育', '园林', '设计', '文化', '木材'], badInd: '金融、金属、机械' },
+            '火': { color: '红色、紫色', badColor: '黑色、蓝色', dir: '南方', num: '2、7', ind: ['互联网', '餐饮', '照明', '美容', '演艺'], badInd: '水产、航运、冷冻' },
+            '土': { color: '黄色、咖色', badColor: '绿色、青色', dir: '中宫/本地', num: '5、0', ind: ['房地产', '建筑', '农业', '仓储', '咨询'], badInd: '木材、园林、教育' },
+            '金': { color: '白色、金色', badColor: '红色、紫色', dir: '西方', num: '4、9', ind: ['金融', '珠宝', '汽车', '机械', '五金'], badInd: '餐饮、互联网、照明' },
+            '水': { color: '黑色、蓝色、深灰色', badColor: '黄色、咖啡色', dir: '北方', num: '1、6', ind: ['物流运输', '国际贸易', '旅游服务', '水利航运', '酒水饮料', '咨询'], badInd: '房地产、建筑、矿产' } 
+        };
+
+        /* =========================================
            逻辑交互区
            ========================================= */
         let selectedGender = '';
@@ -350,7 +541,7 @@
         function generateFortune(user) {
             const today = new Date();
             const nameCode = user.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-            const bdayCode = new Date(user.bday).getDate(); 
+            const bdayCode = new Date(user.bday).getDate();
             const userHash = nameCode + bdayCode + (user.gender === 'male' ? 1 : 2);
 
             const dayOfYear = getDayOfYear();
@@ -370,7 +561,7 @@
             const colorIdx = Math.floor(rng() * DB.colors.length);
             const dirIdx = Math.floor(rng() * DB.dirs.length);
             const luckyNum = Math.floor(rng() * 10);
-
+            
             return {
                 main: main, 
                 warning: DB.warnings[warningIdx],
@@ -382,22 +573,24 @@
         function saveProfile() {
             const name = document.getElementById('input-name').value.trim();
             const bday = document.getElementById('input-date').value;
-            if (!name || !bday || !selectedGender) return alert("请完整填写信息，以校准磁场");
+            const btime = document.getElementById('input-time').value; 
             
-            localStorage.setItem('lucky_user', JSON.stringify({ name, bday, gender: selectedGender }));
+            if (!name || !bday || !selectedGender || btime === "") return alert("请完整填写信息，以校准磁场");
+            
+            localStorage.setItem('lucky_user', JSON.stringify({ name, bday, btime, gender: selectedGender }));
             startBuffering();
         }
 
         function startBuffering() {
             document.getElementById('register-view').classList.add('hidden-view');
             document.getElementById('result-view').classList.add('hidden-view');
+            document.getElementById('bazi-view').classList.add('hidden-view');
             document.getElementById('buffer-view').classList.remove('hidden-view');
             
             const user = JSON.parse(localStorage.getItem('lucky_user'));
             
             document.getElementById('buffer-text').innerHTML = 
-                `正在确认<br><span class="font-normal text-[#FF9A94] text-lg mx-1">${user.name}</span>的运势`;
-            
+                `正在确认<br><span class="font-normal text-[#FF9A94] text-lg mx-1">${user.name}</span>的运势与命盘`;
             setTimeout(showResult, 1800); 
         }
 
@@ -411,9 +604,7 @@
             const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
             document.getElementById('display-date').innerText = dateString;
             
-            // 已更新为：XX 的今日运势，颜色深灰
             document.getElementById('display-name-fortune').innerText = `${user.name} 的今日运势`;
-
             const res = generateFortune(user);
             
             document.getElementById('lucky-keyword').innerText = res.main.kw;
@@ -422,7 +613,6 @@
             
             document.getElementById('advice-do').innerText = res.do;
             document.getElementById('advice-dont').innerText = res.dont;
-            
             document.getElementById('meta-num').innerText = res.num;
             document.getElementById('meta-food').innerText = res.food;
             document.getElementById('meta-dir').innerText = res.dir;
@@ -439,11 +629,150 @@
             }
         }
 
+        function showBazi() {
+            document.getElementById('result-view').classList.add('hidden-view');
+            document.getElementById('bazi-view').classList.remove('hidden-view');
+            
+            const user = JSON.parse(localStorage.getItem('lucky_user'));
+            const dateStr = user.bday;
+            const hourVal = parseInt(user.btime);
+            
+            const [year, month, day] = dateStr.split('-').map(Number);
+            
+            // 核心排盘计算
+            const solar = Solar.fromYmdHms(year, month, day, hourVal, 0, 0);
+            const lunar = solar.getLunar();
+            const bazi = lunar.getEightChar();
+            
+            const zodiac = lunar.getYearShengXiao();
+            const baziStr = `${bazi.getYear()} ${bazi.getMonth()} ${bazi.getDay()} ${bazi.getTime()}`;
+            
+            const dayGan = bazi.getDayGan(); 
+            const myWuxing = bazi.getDayWuXing().charAt(0); 
+            const mingge = dayGan + myWuxing + '命';
+            
+            const pillars = [
+                { name: '年柱', text: bazi.getYear(), tag: bazi.getYearWuXing() },
+                { name: '月柱', text: bazi.getMonth(), tag: bazi.getMonthWuXing() },
+                { name: '日柱', text: bazi.getDay(), tag: bazi.getDayWuXing() },
+                { name: '时柱', text: bazi.getTime(), tag: bazi.getTimeWuXing() }
+            ];
+
+            // 统计五行力量
+            const allElements = bazi.getYearWuXing() + bazi.getMonthWuXing() + bazi.getDayWuXing() + bazi.getTimeWuXing();
+            const counts = { '木':0, '火':0, '土':0, '金':0, '水':0 };
+            for(let char of allElements) { if(counts[char] !== undefined) counts[char]++; }
+            
+            let wangArr = [], ruoArr = [], queArr = [];
+            elementsData.forEach(el => {
+                let c = counts[el.name];
+                if(c === 0) queArr.push(el.name);
+                else if(c >= 3) wangArr.push(el.name);
+                else if(c === 1 || c === 2) ruoArr.push(el.name);
+            });
+            const gejuStr = (wangArr.length > 0 ? wangArr.join('') + '旺' : '') + 
+                            (ruoArr.length > 0 ? ruoArr.join('') + '弱' : '') + '之命局';
+
+            // 生克关系
+            const guiren = shengMeDict[myWuxing]; 
+            const iSheng = shengDict[myWuxing];
+            const keMe = keMeDict[myWuxing];      
+            const iKe = keDict[myWuxing];         
+
+            // ====== 填充DOM ======
+            // 1. 先天属性
+            document.getElementById('r-mingge-title').innerText = mingge;
+            document.getElementById('r-mingge-desc').innerText = minggeTraits[myWuxing];
+            document.getElementById('r-bazi-grid').innerHTML = pillars.map(p => `
+                <div class="bazi-item">
+                    <div class="bazi-label">${p.name}</div>
+                    <div class="bazi-text">${p.text}</div>
+                    <div class="bazi-tag">${p.tag}</div>
+                </div>
+            `).join('');
+            
+            // 2. 五行力量
+            document.getElementById('r-dist-desc').innerText = `您的八字五行构成为：木${counts['木']}、火${counts['火']}、土${counts['土']}、金${counts['金']}、水${counts['水']}`;
+            document.getElementById('r-bars').innerHTML = elementsData.map(el => {
+                let percent = (counts[el.name] / 8) * 100;
+                return `
+                <div class="bar-row">
+                    <div class="bar-name" style="color:${el.color}">${el.name}</div>
+                    <div class="bar-dot" style="background-color:${el.color}"></div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width:${percent}%; background-color:${el.color}"></div>
+                    </div>
+                    <div class="bar-num">${counts[el.name]}</div>
+                </div>`;
+            }).join('');
+            
+            document.getElementById('r-wang').innerText = wangArr.join('、') || '无';
+            document.getElementById('r-ruo').innerText = ruoArr.join('、') || '无';
+            document.getElementById('r-que').innerText = queArr.join('、') || '无';
+            document.getElementById('r-geju').innerText = gejuStr;
+            
+            // 3. 生克指南
+            document.getElementById('r-sheng-me1').innerText = myWuxing + '命';
+            document.getElementById('r-sheng-logic').innerText = `${guiren}生${myWuxing}`;
+            document.getElementById('r-guiren1').innerText = guiren;
+            document.getElementById('r-ke-me1').innerText = myWuxing + '命';
+            document.getElementById('r-kemenode').innerText = keMe;
+
+            // 4. 总体运势强弱
+            document.getElementById('r-zodiac').innerText = `属${zodiac}`;
+            document.getElementById('r-mingge-grid').innerText = mingge;
+            document.getElementById('r-guiren-grid').innerText = guiren;
+            document.getElementById('r-zhuyi-grid').innerText = keMe;
+
+            let advText = `日元力量平稳，运势顺畅。`;
+            if(counts[myWuxing] <= 1) advText = `日元力量偏弱，需借助贵人五行补充能量。`;
+            else if(counts[myWuxing] >= 3) advText = `日元力量强旺，自身气场充足，能担大任。`;
+            document.getElementById('r-adv-text').innerText = advText;
+
+            let disText = wangArr.length > 0 ? `${wangArr[0]}气偏旺，需注意平衡调节。` : `五行相对均衡。`;
+            if (wangArr.includes(keMe)) disText = `${keMe}气偏旺，克制日元，需注意化解压力。`; 
+            document.getElementById('r-dis-text').innerText = disText;
+
+            // 5. 五行开运建议
+            const luckInfo = luckDict[myWuxing];
+            document.getElementById('r-luck-color').innerText = luckInfo.color.split('、')[0];
+            document.getElementById('r-luck-dir').innerText = luckInfo.dir;
+            document.getElementById('r-luck-num').innerText = luckInfo.num;
+            document.getElementById('r-luck-guiren').innerText = `${guiren}属性`;
+            document.getElementById('r-luck-tags').innerHTML = luckInfo.ind.map(t => `<span class="tag">${t}</span>`).join('');
+            
+            // 6. 综合结论
+            document.getElementById('c-bazi').innerText = baziStr;
+            document.getElementById('c-mingge').innerText = mingge;
+            document.getElementById('c-mingge-desc').innerText = minggeTraits[myWuxing];
+            document.getElementById('c-mingge2').innerText = mingge;
+            document.getElementById('c-geju').innerText = gejuStr;
+            
+            let powerDesc = `自身能量均衡。`;
+            if(counts[myWuxing] <= 1) powerDesc = `日元力量偏弱，需借助贵人五行补充能量。`; 
+            else if(counts[myWuxing] >= 3) powerDesc = `日元力量偏旺，具备开拓进取的底气。`;
+            document.getElementById('c-power-desc').innerText = powerDesc;
+
+            document.getElementById('c-guiren').innerText = guiren;
+            document.getElementById('c-zhuyi').innerText = keMe;
+            document.getElementById('c-color').innerText = luckInfo.color.split('、')[0]; 
+            document.getElementById('c-dir').innerText = luckInfo.dir;
+            document.getElementById('c-guiren2').innerText = myWuxing;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function backToResult() {
+            document.getElementById('bazi-view').classList.add('hidden-view');
+            document.getElementById('result-view').classList.remove('hidden-view');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         window.onload = () => {
             if (localStorage.getItem('lucky_user')) {
-                startBuffering(); 
+                startBuffering();
             } else {
-                document.getElementById('register-view').classList.remove('hidden-view'); 
+                document.getElementById('register-view').classList.remove('hidden-view');
             }
         };
 
