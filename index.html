@@ -29,8 +29,16 @@
             font-family: 'Inter', -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
             background-color: var(--bg-pearl); 
             color: var(--text-main); 
+            /* 禁用iOS橡皮筋回弹效果，消除网页感 */
             overscroll-behavior: none; 
+            /* 禁用点击高亮色 */
             -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 全面屏/刘海屏安全区域适配 */
+        .safe-area-padding {
+            padding-top: max(2rem, env(safe-area-inset-top));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
         }
         
         .serif { font-family: 'Noto Serif SC', serif; }
@@ -77,14 +85,16 @@
         .star-full { fill: var(--coral-pink); }
         .star-empty { fill: #F0EBE9; }
         
+        /* 输入框优化：字体必须 >= 16px，防止 iOS Safari 点击时自动放大页面 */
         input[type="text"], input[type="date"], select {
             -webkit-appearance: none;
             border-radius: 16px;
-            font-size: 15px; 
+            font-size: 16px; 
             color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.7);
         }
         input:focus, select:focus { outline: none; border-color: var(--horse-blue); background: white; box-shadow: 0 0 0 3px rgba(162, 224, 245, 0.2); }
-        input::placeholder { color: #CDC7C5; font-weight: 300; }
+        input::placeholder { color: #CDC7C5; font-weight: 300; font-size: 15px;}
         
         .breathing { animation: breath 2.5s infinite ease-in-out; }
         @keyframes breath { 0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 10px rgba(162,224,245,0.4)); } 50% { opacity: 0.8; transform: scale(0.96); filter: drop-shadow(0 0 2px rgba(162,224,245,0.1)); } }
@@ -114,7 +124,7 @@
         .tag { background: white; color: var(--text-main); font-size: 12px; padding: 4px 12px; border-radius: 16px; border: 1px solid #F0EBE9;}
     </style>
 </head>
-<body class="flex flex-col items-center min-h-screen w-full px-5 safe-area-padding py-8">
+<body class="flex flex-col items-center min-h-screen w-full px-5 safe-area-padding">
 
     <div class="bg-glow"></div>
 
@@ -142,7 +152,7 @@
         </p>
         
         <div class="space-y-4 w-full">
-            <input type="text" id="input-name" placeholder="请输入您的昵称" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
+            <input type="text" id="input-name" placeholder="请输入您的昵称" class="w-full h-[52px] px-5 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
 
             <div class="flex space-x-3 w-full">
                 <button onclick="selectGender('male')" class="gender-btn flex-1 h-[52px] rounded-2xl border border-[#EBE6E4] text-[13px] font-light bg-white/70 shadow-sm tracking-widest">先生</button>
@@ -151,12 +161,12 @@
             
             <div class="w-full">
                 <label class="block text-[10px] text-[#AFA6A3] mb-2 ml-1 tracking-widest text-center font-light">您的公历出生日期</label>
-                <input type="date" id="input-date" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
+                <input type="date" id="input-date" class="w-full h-[52px] px-5 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
             </div>
 
             <div class="w-full">
                 <label class="block text-[10px] text-[#AFA6A3] mb-2 ml-1 tracking-widest text-center font-light">您的出生时辰 (命盘所需)</label>
-                <select id="input-time" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light outline-none">
+                <select id="input-time" class="w-full h-[52px] px-5 border border-[#EBE6E4] text-center shadow-sm transition-all font-light outline-none">
                     <option value="0">子时 (23:00-00:59)</option>
                     <option value="2">丑时 (01:00-02:59)</option>
                     <option value="4">寅时 (03:00-04:59)</option>
