@@ -18,27 +18,19 @@
             --bg-pearl: #FDFCFB;      
             
             /* 五行莫兰迪色 */
-            --wood: #86C166;
-            --fire: #E16B8C;
-            --earth: #DDA52D;
-            --metal: #A4A4A8;
-            --water: #58B2DC;
+            --wood: #B5D4B5;
+            --fire: #F0BAC4;
+            --earth: #DDC8A8;
+            --metal: #CAC4C0;
+            --water: #A8D2E0;
         }
         
         body { 
             font-family: 'Inter', -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
             background-color: var(--bg-pearl); 
             color: var(--text-main); 
-            /* 禁用iOS橡皮筋回弹效果，消除网页感 */
             overscroll-behavior: none; 
-            /* 禁用点击高亮色 */
             -webkit-tap-highlight-color: transparent;
-        }
-
-        /* 全面屏/刘海屏安全区域适配 */
-        .safe-area-padding {
-            padding-top: max(2rem, env(safe-area-inset-top));
-            padding-bottom: max(2rem, env(safe-area-inset-bottom));
         }
         
         .serif { font-family: 'Noto Serif SC', serif; }
@@ -85,16 +77,14 @@
         .star-full { fill: var(--coral-pink); }
         .star-empty { fill: #F0EBE9; }
         
-        /* 输入框优化：字体必须 >= 16px，防止 iOS Safari 点击时自动放大页面 */
         input[type="text"], input[type="date"], select {
             -webkit-appearance: none;
             border-radius: 16px;
-            font-size: 16px; 
+            font-size: 15px; 
             color: var(--text-main);
-            background-color: rgba(255, 255, 255, 0.7);
         }
         input:focus, select:focus { outline: none; border-color: var(--horse-blue); background: white; box-shadow: 0 0 0 3px rgba(162, 224, 245, 0.2); }
-        input::placeholder { color: #CDC7C5; font-weight: 300; font-size: 15px;}
+        input::placeholder { color: #CDC7C5; font-weight: 300; }
         
         .breathing { animation: breath 2.5s infinite ease-in-out; }
         @keyframes breath { 0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 10px rgba(162,224,245,0.4)); } 50% { opacity: 0.8; transform: scale(0.96); filter: drop-shadow(0 0 2px rgba(162,224,245,0.1)); } }
@@ -112,19 +102,57 @@
         .bazi-text { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: var(--text-main);}
         .bazi-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #F0EBE9; color: var(--text-main); display: inline-block;}
         
-        .bar-row { display: flex; align-items: center; margin-bottom: 12px; }
-        .bar-name { width: 22px; font-size: 13px; font-weight: 600; }
-        .bar-dot { width: 16px; height: 16px; border-radius: 50%; margin-right: 10px; }
-        .bar-track { flex: 1; height: 8px; background: rgba(240,235,233,0.5); border-radius: 4px; margin-right: 12px; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; }
-        .bar-num { width: 16px; text-align: right; font-size: 13px; font-weight: 500; color: var(--text-main); }
+        .bar-row { display: flex; align-items: center; margin-bottom: 16px; }
+        .bar-name { width: 24px; font-size: 14px; font-weight: 600; text-align: center; }
+        .bar-track { flex: 1; height: 12px; background: rgba(240,235,233,0.25); border-radius: 8px; margin: 0 14px; overflow: hidden; box-shadow: inset 0 1px 4px rgba(0,0,0,0.06); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); position: relative; }
+        .bar-fill { height: 100%; border-radius: 8px; transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
+        .bar-fill::after { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 55%; background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%); border-radius: 8px 8px 0 0; pointer-events: none; }
+        .bar-num { width: 20px; text-align: right; font-size: 13px; font-weight: 500; color: var(--text-main); }
         
         .pill { background: rgba(162, 224, 245, 0.2); color: var(--text-main); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; margin: 0 2px; }
         .tag-group { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
         .tag { background: white; color: var(--text-main); font-size: 12px; padding: 4px 12px; border-radius: 16px; border: 1px solid #F0EBE9;}
-    </style>
+    
+        /* --- Unlock page --- */
+        .unlock-container { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; padding: 20px 0; }
+        .unlock-input { width: 100%; height: 52px; padding: 0 20px; background: rgba(255,255,255,0.7); border: 1px solid #EBE6E4; border-radius: 16px; text-align: center; font-size: 18px; letter-spacing: 0.3em; font-weight: 600; transition: all 0.3s; outline: none; color: #756C69; }
+        .unlock-input:focus { border-color: #A2E0F5; box-shadow: 0 0 0 3px rgba(162,224,245,0.2); }
+        .unlock-btn { width: 100%; height: 52px; background: linear-gradient(135deg, #A2E0F5, #FF9A94); color: white; border: none; border-radius: 16px; font-size: 14px; letter-spacing: 0.3em; font-weight: 500; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 24px rgba(162,224,245,0.3); }
+        .unlock-btn:active { transform: scale(0.97); }
+        .unlock-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .unlock-error { color: #F0BAC4; font-size: 12px; margin-top: 8px; min-height: 20px; text-align: center; }
+        .unlock-success { color: #B5D4B5; font-size: 13px; font-weight: 600; text-align: center; }
+        .unlock-hint { font-size: 11px; color: #B0A7A4; margin-top: 16px; text-align: center; line-height: 1.6; }
+        /* --- Date selects --- */
+        .date-select { flex: 1; height: 52px; padding: 0 8px; background: rgba(255,255,255,0.7); border: 1px solid #EBE6E4; border-radius: 16px; text-align: center; font-size: 13px; color: #756C69; outline: none; transition: all 0.3s; -webkit-appearance: none; appearance: none; }
+        .date-select:focus { border-color: #A2E0F5; box-shadow: 0 0 0 3px rgba(162,224,245,0.2); }
+        /* --- Error bar --- */
+        #error-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #F0BAC4; color: white; text-align: center; padding: 10px 16px; font-size: 12px; font-weight: 500; letter-spacing: 0.05em; transform: translateY(-100%); transition: transform 0.3s ease; }
+        #error-bar.show { transform: translateY(0); }
+        /* --- Element tag --- */
+        .element-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.7); border: 1px solid #F0EBE9; border-radius: 20px; padding: 4px 14px; font-size: 11px; line-height: 1; color: #756C69; letter-spacing: 0.05em; }
+        .element-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        /* --- Select wrapper --- */
+        .select-wrapper { position: relative; }
+        .select-wrapper::after { content: "\25BC"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 8px; color: #B0A7A4; pointer-events: none; }
+
+        /* --- View transitions --- */
+        .view-fade-out { animation: fadeOut 0.25s ease forwards; }
+        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(8px); } }
+
+        /* --- Result lock overlay --- */
+        .result-lock-overlay { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(253,252,251,0.92); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 60px 30px; border-radius: 0 0 36px 36px; z-index: 10; cursor: pointer; transition: opacity 0.4s ease; }
+        .result-lock-overlay.hidden { opacity: 0; pointer-events: none; }
+        .lock-icon-svg { width: 48px; height: 48px; margin-bottom: 16px; }
+        .lock-title { font-size: 15px; font-weight: 600; color: #756C69; margin-bottom: 8px; letter-spacing: 0.1em; }
+        .lock-desc { font-size: 11px; color: #B0A7A4; text-align: center; line-height: 1.6; margin-bottom: 24px; }
+        .lock-btn { background: linear-gradient(135deg, #A2E0F5, #FF9A94); color: white; border: none; border-radius: 16px; padding: 12px 32px; font-size: 13px; letter-spacing: 0.15em; font-weight: 500; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(162,224,245,0.3); }
+        .lock-btn:active { transform: scale(0.95); }
+</style>
 </head>
-<body class="flex flex-col items-center min-h-screen w-full px-5 safe-area-padding">
+<body class="flex flex-col items-center min-h-screen w-full px-5 safe-area-padding py-8">
+    <div id="error-bar"></div>
+
 
     <div class="bg-glow"></div>
 
@@ -147,12 +175,11 @@
         <h2 class="serif text-[17px] mb-4 text-center font-light tracking-[0.2em] text-[#756C69] leading-loose">
             生活原本沉闷<br>但跑起来就有风
         </h2>
-        <p class="text-[11px] text-[#FF9A94] mb-8 text-center tracking-[0.25em] font-light">
-            录入信息 · 接收你的专属运势
-        </p>
+        <p class="text-[11px] text-[#FF9A94] mb-2 text-center tracking-[0.25em] font-light">录入信息 · 接收你的专属运势</p>
+        <p class="text-[10px] text-[#AFA6A3] mb-8 text-center tracking-[0.15em] font-light">基于真实生辰八字，五行生克精准匹配</p>
         
         <div class="space-y-4 w-full">
-            <input type="text" id="input-name" placeholder="请输入您的昵称" class="w-full h-[52px] px-5 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
+            <input type="text" id="input-name" placeholder="请输入您的昵称" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
 
             <div class="flex space-x-3 w-full">
                 <button onclick="selectGender('male')" class="gender-btn flex-1 h-[52px] rounded-2xl border border-[#EBE6E4] text-[13px] font-light bg-white/70 shadow-sm tracking-widest">先生</button>
@@ -160,13 +187,39 @@
             </div>
             
             <div class="w-full">
-                <label class="block text-[10px] text-[#AFA6A3] mb-2 ml-1 tracking-widest text-center font-light">您的公历出生日期</label>
-                <input type="date" id="input-date" class="w-full h-[52px] px-5 border border-[#EBE6E4] text-center shadow-sm transition-all font-light">
+                <!-- 农历公历切换 -->
+                <div class="flex items-center justify-center space-x-3 mb-2 w-full">
+                    <label class="text-[10px] text-[#AFA6A3] tracking-widest font-light">您的出生年月日</label>
+                    <div class="flex bg-[#F0EBE9]/50 rounded-md p-0.5">
+                        <button type="button" id="btn-solar" onclick="setCalendarType('solar')" class="px-2.5 py-0.5 text-[10px] rounded bg-white shadow-sm text-[#756C69] font-medium transition-all">公历</button>
+                        <button type="button" id="btn-lunar" onclick="setCalendarType('lunar')" class="px-2.5 py-0.5 text-[10px] rounded text-[#AFA6A3] font-light transition-all">农历</button>
+                    </div>
+                </div>
+                
+                <input type="hidden" id="calendar-type" value="solar">
+                <input type="date" id="input-date" class="hidden">
+                <div class="flex space-x-2 w-full">
+                    <div class="select-wrapper flex-1">
+                        <select id="input-year" class="date-select w-full" onchange="updateDateFromSelects()">
+                            <option value="">年</option><option value="1950">1950</option><option value="1951">1951</option><option value="1952">1952</option><option value="1953">1953</option><option value="1954">1954</option><option value="1955">1955</option><option value="1956">1956</option><option value="1957">1957</option><option value="1958">1958</option><option value="1959">1959</option><option value="1960">1960</option><option value="1961">1961</option><option value="1962">1962</option><option value="1963">1963</option><option value="1964">1964</option><option value="1965">1965</option><option value="1966">1966</option><option value="1967">1967</option><option value="1968">1968</option><option value="1969">1969</option><option value="1970">1970</option><option value="1971">1971</option><option value="1972">1972</option><option value="1973">1973</option><option value="1974">1974</option><option value="1975">1975</option><option value="1976">1976</option><option value="1977">1977</option><option value="1978">1978</option><option value="1979">1979</option><option value="1980">1980</option><option value="1981">1981</option><option value="1982">1982</option><option value="1983">1983</option><option value="1984">1984</option><option value="1985">1985</option><option value="1986">1986</option><option value="1987">1987</option><option value="1988">1988</option><option value="1989">1989</option><option value="1990">1990</option><option value="1991">1991</option><option value="1992">1992</option><option value="1993">1993</option><option value="1994">1994</option><option value="1995">1995</option><option value="1996">1996</option><option value="1997">1997</option><option value="1998">1998</option><option value="1999">1999</option><option value="2000">2000</option><option value="2001">2001</option><option value="2002">2002</option><option value="2003">2003</option><option value="2004">2004</option><option value="2005">2005</option><option value="2006">2006</option><option value="2007">2007</option><option value="2008">2008</option><option value="2009">2009</option><option value="2010">2010</option><option value="2011">2011</option><option value="2012">2012</option><option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option>
+                        </select>
+                    </div>
+                    <div class="select-wrapper flex-1">
+                        <select id="input-month" class="date-select w-full" onchange="updateDateFromSelects()">
+                            <option value="">月</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                        </select>
+                    </div>
+                    <div class="select-wrapper flex-1">
+                        <select id="input-day" class="date-select w-full" onchange="updateDateFromSelects()">
+                            <option value="">日</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div class="w-full">
-                <label class="block text-[10px] text-[#AFA6A3] mb-2 ml-1 tracking-widest text-center font-light">您的出生时辰 (命盘所需)</label>
-                <select id="input-time" class="w-full h-[52px] px-5 border border-[#EBE6E4] text-center shadow-sm transition-all font-light outline-none">
+                <label class="block text-[10px] text-[#AFA6A3] mb-2 ml-1 tracking-widest text-center font-light">您的出生时辰（命盘所需）</label>
+                <select id="input-time" class="w-full h-[52px] px-5 bg-white/70 border border-[#EBE6E4] text-center shadow-sm transition-all font-light outline-none">
                     <option value="0">子时 (23:00-00:59)</option>
                     <option value="2">丑时 (01:00-02:59)</option>
                     <option value="4">寅时 (03:00-04:59)</option>
@@ -179,6 +232,7 @@
                     <option value="18">酉时 (17:00-18:59)</option>
                     <option value="20">戌时 (19:00-20:59)</option>
                     <option value="22">亥时 (21:00-22:59)</option>
+                    <option value="12">不清楚具体时间</option>
                 </select>
             </div>
 
@@ -186,7 +240,13 @@
                 开启专属运势
             </button>
         </div>
-    </div>
+        <div class="mt-6 text-center">
+            <p class="text-[9px] text-[#C5BCBA] font-light tracking-wider leading-relaxed">
+                信息仅用于生成运势，不会上传服务器<br>
+                © 本测试版权及最终解释权归属小红书@失眠乌鸦
+            </p>
+        </div>
+</div>
 
     <div id="buffer-view" class="w-full max-w-[350px] flex flex-col items-center justify-center hidden-view fade-in m-auto">
         <div class="mb-6 breathing">
@@ -223,26 +283,27 @@
                     正在深度解码当日运势...
                 </div>
 
-                <div class="w-full flex flex-col items-center border-t border-[#F0EBE9] pt-7 mb-8">
-                    <span id="display-name-fortune" class="text-[13px] text-[#756C69] tracking-widest font-bold mb-4">
+                <div class="w-full flex flex-col items-center border-t border-[#F0EBE9]/60 pt-7 mb-8">
+                    <span id="display-name-fortune" class="text-[13px] text-[#756C69] tracking-widest font-bold mb-1">
                         -- 的今日运势
                     </span>
                     <div id="star-container" class="flex space-x-1.5">
                         </div>
+                    <div id="element-tag" class="element-tag mt-4 mb-3"></div>
                 </div>
 
                 <div class="w-full grid grid-cols-2 gap-3 mb-6">
                     <div class="bg-[#A2E0F5]/10 p-4 rounded-2xl border border-[#A2E0F5]/30 text-center">
                         <p class="text-[10px] text-[#63C1E3] font-bold mb-2 tracking-widest uppercase">宜 / Do</p>
-                        <p id="advice-do" class="text-[13px] text-[#5D5451] font-medium truncate">--</p>
+                        <p id="advice-do" class="text-[13px] text-[#5D5451] font-medium break-words">--</p>
                     </div>
                     <div class="bg-[#FF9A94]/10 p-4 rounded-2xl border border-[#FF9A94]/30 text-center">
                         <p class="text-[10px] text-[#FA8F79] font-bold mb-2 tracking-widest uppercase">忌 / Avoid</p>
-                        <p id="advice-dont" class="text-[13px] text-[#5D5451] font-medium truncate">--</p>
+                        <p id="advice-dont" class="text-[13px] text-[#5D5451] font-medium break-words">--</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-4 gap-2 w-full">
+                <div class="grid grid-cols-4 gap-2 w-full mb-4">
                     <div class="bg-white/60 py-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[64px]">
                         <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">食物</p>
                         <p id="meta-food" class="text-[13px] font-bold text-[#756C69] leading-tight">--</p>
@@ -253,7 +314,7 @@
                     </div>
                     <div class="bg-white/60 py-3 rounded-xl text-center border border-white flex flex-col items-center justify-center shadow-sm h-[64px]">
                         <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">颜色</p>
-                        <div id="meta-color-block" class="w-4 h-4 rounded-full border border-white shadow-sm"></div>
+                        <div id="meta-color-block" class="w-4 h-4 rounded-full border border-white shadow-sm" style="line-height:1;margin:0 auto;display:inline-block;vertical-align:middle"></div>
                     </div>
                     <div class="bg-white/60 py-3 rounded-xl text-center border border-white shadow-sm flex flex-col justify-center h-[64px]">
                         <p class="text-[10px] text-[#B0A7A4] mb-1.5 tracking-wider">方位</p>
@@ -261,22 +322,29 @@
                     </div>
                 </div>
 
-                <div id="lucky-warning" class="w-full mt-7 pt-5 border-t border-dashed border-[#F0EBE9] text-[12.5px] text-[#AFA6A3] leading-[1.8] text-justify font-light">
+                <div id="lucky-warning" class="w-full mt-3 pt-5 border-t border-dashed border-[#F0EBE9] text-[12.5px] text-[#AFA6A3] leading-[1.8] text-justify font-light">
                     </div>
+                
+                <!-- 卡片底部版权 -->
+                <div class="w-full text-center mt-6">
+                    <p class="text-[8px] text-[#C5BCBA] font-light tracking-[0.1em] opacity-80 italic">
+                        © 本测试版权及最终解释权归属小红书@失眠乌鸦
+                    </p>
+                </div>
             </div>
         </div>
 
         <div class="flex space-x-3 mt-6 px-1">
-            <button onclick="localStorage.clear(); location.reload();" class="flex-1 h-[48px] bg-white/50 text-[10px] text-[#9B928F] rounded-xl font-light tracking-widest border border-white backdrop-blur-sm transition-colors hover:bg-white/80">
+            <button onclick="confirmReset()" class="flex-1 h-[48px] bg-white/50 text-[10px] text-[#9B928F] rounded-xl font-light tracking-widest border border-white backdrop-blur-sm transition-colors hover:bg-white/80 active:scale-95">
                 重置信息
             </button>
-            <button onclick="generatePoster()" class="flex-[2] h-[48px] bg-[#FF9A94] text-[12px] text-white tracking-widest uppercase font-medium rounded-xl shadow-lg shadow-[#FF9A94]/30 active:scale-95 transition-transform">
+            <button onclick="handlePoster()" class="flex-[2] h-[48px] bg-[#FF9A94] text-[12px] text-white tracking-widest uppercase font-medium rounded-xl shadow-lg shadow-[#FF9A94]/30 active:scale-95 transition-transform">
                 生成运势签
             </button>
         </div>
         
         <div class="px-1 mt-3">
-            <button onclick="showBazi()" class="w-full h-[48px] bg-[#A2E0F5]/80 text-[12px] text-white tracking-widest uppercase font-medium rounded-xl shadow-lg shadow-[#A2E0F5]/20 active:scale-95 transition-transform border border-white/50">
+            <button onclick="handleShowBazi()" class="w-full h-[48px] bg-[#A2E0F5]/80 text-[12px] text-white tracking-widest uppercase font-medium rounded-xl shadow-lg shadow-[#A2E0F5]/20 active:scale-95 transition-transform border border-white/50">
                 查看我的命盘
             </button>
         </div>
@@ -419,13 +487,50 @@
 
     <div id="poster-modal" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6 fade-in">
         <p class="text-white/90 text-xs mb-6 tracking-[0.2em] font-light">长按图片保存 · 转发朋友圈</p>
-        <img id="generated-image" class="w-full max-w-[320px] rounded-[24px] shadow-2xl mb-8 border-[4px] border-white/20">
+        <img id="generated-image" class="w-full max-w-[320px] rounded-[24px] shadow-2xl mb-8 border-[4px] border-white/20" onload="hidePosterLoading()" onerror="hidePosterLoading()">
         <button onclick="closePoster()" class="w-12 h-12 rounded-full bg-white/20 text-white flex items-center justify-center backdrop-blur-md border border-white/30 active:bg-white/40 transition-colors">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
     </div>
 
+    <div id="unlock-view" class="w-full max-w-[350px] hidden-view fade-in m-auto">
+        <div class="glass-card p-8 unlock-container">
+            <svg class="w-14 h-14 mb-6 drop-shadow-sm opacity-90" viewBox="0 0 100 100">
+                <defs><linearGradient id="lock-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#A2E0F5" /><stop offset="100%" stop-color="#FF9A94" />
+                </linearGradient></defs>
+                <path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z" fill="url(#lock-grad)"/>
+            </svg>
+            <h3 class="serif text-[16px] font-bold text-[#756C69] mb-2 tracking-wider">激活完整运势</h3>
+            <p class="text-[11px] text-[#B0A7A4] mb-6 text-center font-light leading-relaxed">请输入购买后获取的激活码<br>解锁今日运势、命盘分析与运势签</p>
+            <div class="w-full space-y-4">
+                <input type="text" id="unlock-code" class="unlock-input" placeholder="请输入激活码" maxlength="20" autocomplete="off">
+                <button id="unlock-btn" class="unlock-btn" onclick="tryUnlock()">激活解锁</button>
+                <div id="unlock-feedback" class="unlock-error"></div>
+            </div>
+            <p class="unlock-hint">每个激活码仅限一次使用<br>激活后可永久查看全部运势</p>
+            <button onclick="backToResultFromUnlock()" class="mt-4 w-full h-[44px] bg-white/50 text-[11px] text-[#9B928F] rounded-xl font-light tracking-widest border border-white backdrop-blur-sm transition-colors hover:bg-white/80 active:scale-95">返回今日运势</button>
+        </div>
+    </div>
+
     <script>
+        /* =========================================
+           新增：日历类型切换
+           ========================================= */
+        function setCalendarType(type) {
+            document.getElementById('calendar-type').value = type;
+            var btnSolar = document.getElementById('btn-solar');
+            var btnLunar = document.getElementById('btn-lunar');
+            if (type === 'solar') {
+                btnSolar.className = 'px-2.5 py-0.5 text-[10px] rounded bg-white shadow-sm text-[#756C69] font-medium transition-all';
+                btnLunar.className = 'px-2.5 py-0.5 text-[10px] rounded text-[#AFA6A3] font-light transition-all hover:bg-white/50';
+            } else {
+                btnLunar.className = 'px-2.5 py-0.5 text-[10px] rounded bg-white shadow-sm text-[#756C69] font-medium transition-all';
+                btnSolar.className = 'px-2.5 py-0.5 text-[10px] rounded text-[#AFA6A3] font-light transition-all hover:bg-white/50';
+            }
+            updateDateFromSelects();
+        }
+
         /* =========================================
            核心算法区：运势部分
            ========================================= */
@@ -490,7 +595,7 @@
                 { kw: "豁然开朗", msg: "某个一直困扰你的死胡同，今天会突然被一条新信息打通。就像拼图找到了最后一块，一切都变得合情合理了。", score: 5 }
             ],
             warnings:[
-                "由于存在关联性，可能会产生关联数。可能在工作场所移动，法律上可能会产生官司，所以需要彻底管理每件事。小心，你可能会犯错或轻举妄动。另外，由于性别问题，你可能会伤心。",
+                "由于存在关联性，可能会产生关联数。可能在工作场所移动，法律上可能会产生官司，所以需要彻底管理每件事。小心，你可能会犯错或轻举忘动。另外，由于性别问题，你可能会伤心。",
                 "今日容易在细节上得到他人的帮助，但也容易因为粗心遗漏重要物品。职场中会有新的机会显现，但不宜声张，默默把握即可。",
                 "合作关系可能面临隐性考验，沟通时请尽量柔软。切忌在下午时段做冲动的决定。今日适合独自处理文书工作，屏蔽外界干扰。",
                 "出行或走动中可能会遇到意外的惊喜，但也要防范突发的天气变化。言语间注意分寸，以免无意中触碰别人的底线。",
@@ -498,7 +603,7 @@
                 "如果感觉到疲惫，请允许自己停下来休息。今天的直觉非常敏锐，如果觉得某件事不对劲，请相信你的第一感觉。"
             ],
             dos:["喝杯温水","整理桌面","早睡一小时","给家人电话","深度阅读","修剪指甲","晒晒太阳","冥想五分钟","记录灵感","吃顿好的","复盘计划","听首老歌","更换壁纸","清理相册","大口呼吸","赞美他人","写下目标","伸个懒腰","保持微笑","拒绝内耗","立刻行动","买束鲜花","看场电影","泡个热水澡"],
-            donts:["急于反驳","深夜emo","暴饮暴食","久坐不动","盲目跟风","过度承诺","在此刻放弃","翻旧账","预支焦虑","情绪消费","轻信流言","自我怀疑","犹豫不决","沉迷短视频","空腹喝咖","硬碰硬","比较他人","抱怨生活","熬夜追剧","忽视早餐","乱发脾气","透支信用卡"],
+            donts:["急于反驳","深夜emo","暴饮赤食","久坐不动","盲目跟风","过度承诺","在此刻放弃","翻旧账","预支焦虑","情绪消费","轻信流言","自我怀疑","犹豫不决","沉迷短视频","空腹喝咖","硬碰硬","比较他人","抱怨生活","熬夜追剧","忽视早餐","乱发脾气","透支信用卡"],
             foods:["冰美式","马卡龙","黑巧克力","茉莉茶","温牛奶","三文鱼","牛油果","蓝莓","贝果","关东煮","小馄饨","热拿铁","红豆沙","烤红薯","气泡水","蔬菜沙拉","草莓慕斯","清粥小菜","薄荷糖","坚果","橙子","酸奶","蛋挞","燕麦拿铁"],
             colors:[
                 {hex:"#A2E0F5", name:"梦幻粉蓝"}, {hex:"#FF9A94", name:"珊瑚柔粉"}, {hex:"#FFF59D", name:"星光淡黄"}, {hex:"#C5E1A5", name:"薄荷浅绿"}, 
@@ -804,6 +909,292 @@
         function closePoster() {
             document.getElementById('poster-modal').classList.add('hidden');
         }
-    </script>
+    
+        /* === Unlock System - ADDED === */
+        var UNLOCK_KEYS = ["X83U-SPFF","C79Z-N3AM","TWV3-D8C4","B76J-ZHXK","XG9R-2PT4","BZV8-VRG8","RTAA-MGT6","LC3J-GZFK","2LUA-3KLS","9HHE-VFSW"];
+        function initUnlockSystem() { try { if (!localStorage.getItem('lucky_unlocked')) localStorage.setItem('lucky_unlocked', 'false'); if (!localStorage.getItem('lucky_device_id')) localStorage.setItem('lucky_device_id', 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2,9)); } catch(e) {} }
+        function isUnlocked() { try { return localStorage.getItem('lucky_unlocked') === 'true'; } catch(e) { return false; } }
+        function showUnlock() {
+            var v = document.getElementById('unlock-view'); if (!v) return;
+            document.getElementById('result-view').classList.add('hidden-view');
+            document.getElementById('bazi-view').classList.add('hidden-view');
+            document.getElementById('buffer-view').classList.add('hidden-view');
+            document.getElementById('register-view').classList.add('hidden-view');
+            v.classList.remove('hidden-view');
+            var c = document.getElementById('unlock-code'); if (c) c.value = '';
+            var f = document.getElementById('unlock-feedback'); if (f) f.innerText = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function tryUnlock() {
+            var code = document.getElementById('unlock-code').value.trim().toUpperCase();
+            var fb = document.getElementById('unlock-feedback');
+            if (!code) { fb.innerText = '请输入激活码'; fb.className = 'unlock-error'; return; }
+            var found = false;
+            for (var i = 0; i < UNLOCK_KEYS.length; i++) { if (UNLOCK_KEYS[i] === code) { found = true; break; } }
+            if (found) {
+                try { localStorage.setItem('lucky_unlocked', 'true'); } catch(e) {}
+                fb.innerText = '解锁成功！正在转向命盘...';
+                fb.className = 'unlock-success';
+                setTimeout(function() { document.getElementById('unlock-view').classList.add('hidden-view'); showBazi(); }, 1000);
+            } else {
+                fb.innerText = '激活码无效，请核对后重试';
+                fb.className = 'unlock-error';
+            }
+        }
+        function handlePoster() { if (isUnlocked()) { generatePoster(); } else { showUnlock(); } }
+        function handleShowBazi() { if (isUnlocked()) { showBazi(); } else { showUnlock(); } }
+        function confirmReset() { try { localStorage.removeItem('lucky_user'); localStorage.removeItem('lucky_unlocked'); } catch(e) {} location.reload(); }
+        function backToResultFromUnlock() {
+            document.getElementById('unlock-view').classList.add('hidden-view');
+            document.getElementById('result-view').classList.remove('hidden-view');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function updateElementTag() {
+            var ud = localStorage.getItem('lucky_user');
+            if (!ud) return;
+            try {
+                var user = JSON.parse(ud);
+                var parts = user.bday.split('-').map(Number);
+                if (parts.length < 3) return;
+                var solar = Solar.fromYmdHms(parts[0], parts[1], parts[2], 0, 0, 0);
+                var lunar = solar.getLunar();
+                var bazi = lunar.getEightChar();
+                var myWx = bazi.getDayWuXing().charAt(0);
+                var now = new Date();
+                var tSolar = Solar.fromYmd(now.getFullYear(), now.getMonth()+1, now.getDate());
+                var tLunar = tSolar.getLunar();
+                var tBazi = tLunar.getEightChar();
+                var tWx = tBazi.getDayWuXing().charAt(0);
+                var tag = document.getElementById('element-tag');
+                if (!tag) return;
+                var ec = {'木':'#B5D4B5','火':'#F0BAC4','土':'#DDC8A8','金':'#CAC4C0','水':'#A8D2E0'};
+                var clr = ec[myWx] || '#756C69';
+                var sd = {'木':'火','火':'土','土':'金','金':'水','水':'木'};
+                var kd = {'木':'土','土':'水','水':'火','火':'金','金':'木'};
+                var h = (myWx === tWx) ? '气场相同' : (sd[myWx]===tWx || sd[tWx]===myWx) ? '气场相生' : (kd[myWx]===tWx || kd[tWx]===myWx) ? '气场相克' : '气场相安';
+                tag.innerHTML = '<span class="element-dot" style="background:' + clr + '"></span> ' + myWx + '命 · 今日' + tWx + ' · ' + h;
+            } catch(e) {}
+        }
+        /* === Global error handler - ADDED === */
+        window.onerror = function(msg, url, line, col, error) {
+            var bar = document.getElementById('error-bar');
+            if (bar) { bar.innerText = '页面出现异常：' + (msg || '未知错误'); bar.classList.add('show'); setTimeout(function(){bar.classList.remove('show');}, 5000); }
+            return false;
+        };
+        /* === Patch onload for unlock flow === */
+        var _origOnload = window.onload;
+        window.onload = function() { initUnlockSystem(); restoreFormDraft(); initFormDraftAutoSave(); updateElementTag(); var u = localStorage.getItem('lucky_user'); var a = localStorage.getItem('lucky_unlocked'); if (u && a !== 'true') { showUnlock(); return; } if (_origOnload) _origOnload(); };
+
+        /* === Post-loading & UX improvements === */
+        function showPosterLoading() {
+            var pl = document.getElementById('poster-loading');
+            if (!pl) {
+                pl = document.createElement('div');
+                pl.id = 'poster-loading';
+                pl.className = 'fixed inset-0 z-40 flex flex-col items-center justify-center bg-black/30 fade-in';
+                var svgGrad = '<defs><linearGradient id="pload-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A2E0F5"/><stop offset="100%" stop-color="#FF9A94"/></linearGradient></defs>';
+                pl.innerHTML = '<div class="bg-white/90 rounded-3xl p-8 flex flex-col items-center shadow-2xl"><div class="breathing"><svg class="w-16 h-16" viewBox="0 0 100 100">' + svgGrad + '<path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z" fill="url(#pload-grad)"/></svg></div><p class="text-sm text-[#756C69] mt-4 font-light tracking-wider">正在生成运势签...</p></div>';
+                document.body.appendChild(pl);
+            } else { pl.classList.remove('hidden'); }
+        }
+        function hidePosterLoading() {
+            var pl = document.getElementById('poster-loading');
+            if (pl) pl.classList.add('hidden');
+            if (window._posterTimeout) { clearTimeout(window._posterTimeout); window._posterTimeout = null; }
+        }
+        function handlePoster() {
+            if (isUnlocked()) {
+                showPosterLoading();
+                window._posterTimeout = setTimeout(function() { hidePosterLoading(); }, 10000);
+                setTimeout(function() { generatePoster(); }, 100);
+            } else { showUnlock(); }
+        }
+        function confirmReset() {
+            if (confirm('确定要重置个人信息吗？您的设备已激活，重置后无需再次输入激活码。')) {
+                try { localStorage.removeItem('lucky_user'); localStorage.removeItem('lucky_draft'); localStorage.removeItem('lucky_device_id'); } catch(e) {}
+                location.reload();
+            }
+        }
+        
+        function updateDateFromSelects() {
+            var y = parseInt(document.getElementById('input-year').value);
+            var m = parseInt(document.getElementById('input-month').value);
+            var d = parseInt(document.getElementById('input-day').value);
+            if (y && m && d) {
+                var calType = document.getElementById('calendar-type') ? document.getElementById('calendar-type').value : 'solar';
+                if (calType === 'solar') {
+                    var maxDay = new Date(y, m, 0).getDate();
+                    if (d > maxDay) {
+                        var sel = document.getElementById('input-day');
+                        d = maxDay;
+                        sel.value = '' + d;
+                    }
+                    var di = document.getElementById('input-date');
+                    di.value = y + '-' + (m < 10 ? '0' : '') + m + '-' + (d < 10 ? '0' : '') + d;
+                } else {
+                    try {
+                        var lunar = Lunar.fromYmd(y, m, d);
+                        var solar = lunar.getSolar();
+                        var di = document.getElementById('input-date');
+                        di.value = solar.getYear() + '-' + (solar.getMonth() < 10 ? '0' : '') + solar.getMonth() + '-' + (solar.getDay() < 10 ? '0' : '') + solar.getDay();
+                    } catch(e) {
+                        var di = document.getElementById('input-date');
+                        di.value = y + '-' + (m < 10 ? '0' : '') + m + '-' + (d < 10 ? '0' : '') + d;
+                    }
+                }
+            }
+        }
+
+        /* === Form draft auto-save === */
+        function saveFormDraft() {
+            try {
+                var name = document.getElementById('input-name').value;
+                var year = document.getElementById('input-year').value;
+                var month = document.getElementById('input-month').value;
+                var day = document.getElementById('input-day').value;
+                var time = document.getElementById('input-time').value;
+                var genderEl = document.querySelector('.gender-btn.active');
+                var gender = genderEl ? (genderEl.innerText.indexOf('先生') > -1 ? 'male' : 'female') : '';
+                var draft = { name: name, year: year, month: month, day: day, time: time, gender: gender };
+                localStorage.setItem('lucky_draft', JSON.stringify(draft));
+            } catch(e) {}
+        }
+        function restoreFormDraft() {
+            try {
+                var raw = localStorage.getItem('lucky_draft');
+                if (!raw) return;
+                var draft = JSON.parse(raw);
+                if (draft.name) document.getElementById('input-name').value = draft.name;
+                if (draft.year) document.getElementById('input-year').value = draft.year;
+                if (draft.month) document.getElementById('input-month').value = draft.month;
+                if (draft.day) document.getElementById('input-day').value = draft.day;
+                if (draft.time) document.getElementById('input-time').value = draft.time;
+                if (draft.gender) {
+                    document.querySelectorAll('.gender-btn').forEach(function(btn) {
+                        var isMale = btn.innerText.indexOf('先生') > -1;
+                        if ((isMale && draft.gender === 'male') || (!isMale && draft.gender === 'female')) {
+                            btn.classList.add('active');
+                        }
+                    });
+                    window.selectedGender = draft.gender;
+                }
+                if (draft.year && draft.month && draft.day) {
+                    var di = document.getElementById('input-date');
+                    di.value = draft.year + '-' + (draft.month < 10 ? '0' : '') + draft.month + '-' + (draft.day < 10 ? '0' : '') + draft.day;
+                }
+            } catch(e) {}
+        }
+        function clearFormDraft() {
+            try { localStorage.removeItem('lucky_draft'); } catch(e) {}
+        }
+        function initFormDraftAutoSave() {
+            var ids = ['input-name', 'input-year', 'input-month', 'input-day', 'input-time'];
+            ids.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('change', saveFormDraft);
+                    if (id === 'input-name') el.addEventListener('input', saveFormDraft);
+                }
+            });
+            document.querySelectorAll('.gender-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() { setTimeout(saveFormDraft, 50); });
+            });
+        }
+        var _origSaveProfile = saveProfile;
+        saveProfile = function() {
+            _origSaveProfile();
+            if (localStorage.getItem('lucky_user')) clearFormDraft();
+        };
+
+        /* === One-time activation system === */
+        function initUnlockSystem() {
+            try {
+                if (!localStorage.getItem('lucky_unlocked')) localStorage.setItem('lucky_unlocked', 'false');
+                if (!localStorage.getItem('lucky_device_id')) localStorage.setItem('lucky_device_id', 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2,9));
+                if (!localStorage.getItem('lucky_used_codes')) localStorage.setItem('lucky_used_codes', '[]');
+            } catch(e) {}
+        }
+        function tryUnlock() {
+            var code = document.getElementById('unlock-code').value.trim().toUpperCase();
+            var fb = document.getElementById('unlock-feedback');
+            if (!code) { fb.innerText = '请输入激活码'; fb.className = 'unlock-error'; return; }
+            var usedCodes = [];
+            try { usedCodes = JSON.parse(localStorage.getItem('lucky_used_codes') || '[]'); } catch(e) {}
+            if (usedCodes.indexOf(code) > -1) {
+                fb.innerText = '该激活码已被使用'; fb.className = 'unlock-error'; return; }
+            var found = false;
+            for (var i = 0; i < UNLOCK_KEYS.length; i++) { if (UNLOCK_KEYS[i] === code) { found = true; break; } }
+            if (found) {
+                try {
+                    localStorage.setItem('lucky_unlocked', 'true');
+                    usedCodes.push(code);
+                    localStorage.setItem('lucky_used_codes', JSON.stringify(usedCodes));
+                } catch(e) {}
+                fb.innerText = '激活成功！正在加载运势...';
+                fb.className = 'unlock-success';
+                setTimeout(function() {
+                    document.getElementById('unlock-view').classList.add('hidden-view');
+                    startBuffering();
+                }, 1000);
+            } else {
+                fb.innerText = '激活码无效，请核对后重试'; fb.className = 'unlock-error';
+            }
+        }
+        var _origShowResult = showResult;
+        showResult = function() {
+            _origShowResult();
+            updateElementTag();
+            var isActivated = localStorage.getItem('lucky_unlocked') === 'true';
+            var overlay = document.getElementById('result-lock-overlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'result-lock-overlay';
+                overlay.className = 'result-lock-overlay fade-in';
+                var svgG = '<defs><linearGradient id="lock-ov-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A2E0F5"/><stop offset="100%" stop-color="#FF9A94"/></linearGradient></defs>';
+                overlay.innerHTML = '<svg class="lock-icon-svg" viewBox="0 0 100 100">' + svgG + '<path d="M50 10 C50 40 40 50 10 50 C40 50 50 60 50 90 C50 60 60 50 90 50 C60 50 50 40 50 10 Z" fill="url(#lock-ov-grad)"/></svg><div class="lock-title">激活完整运势</div><div class="lock-desc">输入激活码解锁以下内容<br>五行开运指南·宜忌·运势详情</div><button class="lock-btn" onclick="showUnlock()">我有激活码</button>';
+                var glass = document.querySelector('#result-view .glass-card');
+                if (glass) glass.style.position = 'relative';
+                var captureArea = document.querySelector('#result-view #capture-area .glass-card');
+                if (captureArea) {
+                    captureArea.style.position = 'relative';
+                    captureArea.appendChild(overlay);
+                }
+                var calcTop = function() {
+                    var sc = document.getElementById('star-container');
+                    var gc = document.querySelector('#result-view .glass-card');
+                    if (sc && gc) {
+                        var scBot = sc.getBoundingClientRect().bottom;
+                        var gcTop = gc.getBoundingClientRect().top;
+                        overlay.style.top = (scBot - gcTop + 16) + 'px';
+                    } else {
+                        overlay.style.top = '220px';
+                    }
+                };
+                setTimeout(calcTop, 100);
+                window.addEventListener('resize', calcTop);
+            }
+            if (isActivated) { overlay.classList.add('hidden'); }
+            else { overlay.classList.remove('hidden'); if (typeof overlay._topCalc === 'function') overlay._topCalc(); else { var sc = document.getElementById('star-container'); var gc = document.querySelector('#result-view .glass-card'); if (sc && gc) overlay.style.top = (sc.getBoundingClientRect().bottom - gc.getBoundingClientRect().top + 16) + 'px'; } }
+        };
+
+        /* === Bar grow animation === */
+        var _origShowBazi = showBazi;
+        showBazi = function() {
+            _origShowBazi();
+            setTimeout(function() {
+                var fills = document.querySelectorAll('.bar-fill');
+                if (!fills || fills.length === 0) return;
+                var targets = [];
+                fills.forEach(function(f) { targets.push(f.style.width); f.style.width = '0%'; f.style.transition = 'none'; });
+                void document.body.offsetHeight;
+                fills.forEach(function(f, i) {
+                    var color = f.style.backgroundColor || '#B5D4B5';
+                    f.style.shadowColor = color;
+                    f.style.transition = 'width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    f.style.width = targets[i];
+                });
+            }, 80);
+        };
+</script>
 </body>
 </html>
